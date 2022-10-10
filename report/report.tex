@@ -1,0 +1,56 @@
+\documentclass[10pt,conference,compsocconf]{IEEEtran}
+
+\usepackage{hyperref}
+\usepackage{graphicx}	% For figure environment
+
+
+\begin{document}
+\title{Higgs boson discovery through Machine Learning techniques}
+
+\author{
+  Emanuele Nevali, Matteo Suez, Leonardo Bruno Trentini\\
+  \textit{Machine Learning and Optimization Laboratory, EPFL, Switzerland}
+}
+
+\maketitle
+
+\begin{abstract}
+In this project, we applied machine learning techniques to actual CERN particle accelerator data to recreate the process of
+“discovering” the Higgs particle.\\
+Rarely, collisions between protons at high speed can produce a Higgs boson. Since the Higgs boson decays rapidly into other particles, it is not possible to observe it directly, but rather measure its “decay signature”, or the products that result from its decay process. The aim of this project is to estimate the likelihood that a given event’s signature was the result of a Higgs boson (signal) or some other process/particle (background).\\
+\end{abstract}
+
+\section{Methods}
+In order to achieve our goal, we managed to find a model for our problem by implementing six different methods:
+\begin{itemize}
+    \item Linear regression using gradient descent
+    \item Linear regression using stochastic gradient descent
+    \item Least squares regression using normal equations
+    \item Ridge regression using normal equations
+    \item Logistic regression using gradient descent or stochastic gradient descent ($y \in {0,1}$)
+    \item Regularized logistic regression using gradient descent or stochastic gradient descent ($y \in {0,1}$, with regularization term $ \lambda  \| \omega \|^2$)
+\end{itemize}
+All functions return: (w, loss), which is the last weight vector of the
+method, and the corresponding loss value (or cost function).
+Then we implemented additional modifications of these basic methods above...\\
+\vspace{0.1cm}\\
+The dataset provided has been cleaned by removing useless features and values, combining others and finding
+better representations of the features to feed your model. We used cross validation technique to train and test our functions.
+
+\section{Results}
+
+bla bla bla\\
+bla bla bla\\
+~\cite{higgs}
+
+\section{Conclusions}
+
+bla bla bla\\
+bla bla bla\\
+
+
+
+\bibliographystyle{IEEEtran}
+\bibliography{literature}
+
+\end{document}
