@@ -47,7 +47,7 @@ def __compute_gradient(y, tx, w):
     """
     e = y - np.dot(tx, w)
     gradient = -1/len(e) * np.dot(tx.T,e)
-    return gradient, e
+    return gradient
 
 def __batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
      """
@@ -99,12 +99,12 @@ def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
     
     for _ in range(max_iters):
         
-        # compute loss, gradient
-        gradient, err = __compute_gradient(y,tx,w)
-        loss = __compute_mse(err)
-        
+        # compute gradient
+        gradient = __compute_gradient(y,tx,w)
         # update w by gradient descent
         w = w - gamma * gradient
+        # compute loss
+        loss = __compute_loss(y, tx, w)
 
     # return last weights and loss
     return w, loss
@@ -131,8 +131,9 @@ def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
     for _ in range(max_iters):
 
         for y_batch, tx_batch in __batch_iter(y, tx, batch_size=batch_size, num_batches=1):
+
             # compute a stochastic gradient
-            grad, _ = __compute_gradient(y_batch, tx_batch, w)
+            grad = __compute_gradient(y_batch, tx_batch, w)
             # update w through the stochastic gradient update
             w = w - gamma * grad
             # calculate loss
@@ -156,6 +157,7 @@ def least_squares(y, tx):
     """
     a = tx.T.dot(tx)
     b = tx.T.dot(y)
+    
     return (w := np.linalg.solve(a,b)), __compute_loss(y, tx, w)
 
 def ridge_regression(y, tx, lambda_):
