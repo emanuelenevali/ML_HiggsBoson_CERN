@@ -139,10 +139,25 @@ def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
             # calculate loss
             loss = __compute_loss(y, tx, w)
    
+    # return last weights and loss
     return w, loss
 
 def least_squares(y, tx):
-    pass
+    """Calculate the least squares solution.
+       returns optimal weights and mse.
+    
+    Args:
+        y: numpy array of shape (N,), N is the number of samples.
+        tx: numpy array of shape (N,D), D is the number of features.
+    
+    Returns:
+        w: optimal weights, numpy array of shape(D,), D is the number of features.
+        loss: scalar denoting the loss computed as MSE
+
+    """
+    a = tx.T.dot(tx)
+    b = tx.T.dot(y)
+    return (w := np.linalg.solve(a,b)), __compute_loss(y, tx, w)
 
 def ridge_regression(y, tx, _lambda):
     pass
