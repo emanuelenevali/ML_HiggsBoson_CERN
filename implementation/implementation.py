@@ -33,7 +33,6 @@ def __compute_loss(y, tx, w):
     
     return __compute_mse(e)
 
-
 def __compute_gradient(y, tx, w):
     """Computes the gradient at w.
         
@@ -159,11 +158,29 @@ def least_squares(y, tx):
     b = tx.T.dot(y)
     return (w := np.linalg.solve(a,b)), __compute_loss(y, tx, w)
 
-def ridge_regression(y, tx, _lambda):
-    pass
+def ridge_regression(y, tx, lambda_):
+    """Implement ridge regression.
+    
+    Args:
+        y: numpy array of shape (N,), N is the number of samples.
+        tx: numpy array of shape (N,D), D is the number of features.
+        lambda_: scalar.
+    
+    Returns:
+        w: optimal weights, numpy array of shape(D,), D is the number of features.
+        loss: scalar denoting the loss computed as MSE
+
+    """
+    d = tx.shape[1]
+
+    aI = lambda_ * np.eye(d)
+    a = tx.T.dot(tx) + aI
+    b = tx.T.dot(y)
+    
+    return (w := np.solve(a,b)), __compute_loss(y, tx, w)
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
     pass
 
-def reg_logistic_regression(y, tx, _lambda , initial_w, max_iters, gamma):
+def reg_logistic_regression(y, tx, lambda_ , initial_w, max_iters, gamma):
     pass
