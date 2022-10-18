@@ -31,6 +31,12 @@ def cleaning_data(tx):
         tx[:,i]=np.where(tx[:,i]==-999,median,tx[:,i])
     return tx    
         
+def predict_labels(tx, w):
+    """Return prediction given the data and the weights"""
+    y = np.dot(tx, w)
+    y[np.where(y <= 0)] = -1
+    y[np.where(y > 0)] = 1
+    return y
 
 def create_csv_submission(ids, y_pred, name):
     """
