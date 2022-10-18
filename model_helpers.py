@@ -1,52 +1,4 @@
-"""Some helper functions for project 1."""
-import csv
 import numpy as np
-
-def load_csv_data(data_path, sub_sample=False):
-    """Loads data and returns y (class labels), tX (features) and ids (event ids)"""
-    y = np.genfromtxt(data_path, delimiter=",", skip_header=1, dtype=str, usecols=1)
-    x = np.genfromtxt(data_path, delimiter=",", skip_header=1)
-    ids = x[:, 0].astype(np.int)
-    input_data = x[:, 2:]
-
-    # convert class labels from strings to binary (-1,1)
-    yb = np.ones(len(y))
-    yb[np.where(y == "b")] = -1
-
-    # sub-sample
-    if sub_sample:
-        yb = yb[::50]
-        input_data = input_data[::50]
-        ids = ids[::50]
-
-    return yb, input_data, ids
-
-def cleaning_data(tx):
-    """ preprocessing data: delete columns with more than 50% missing values or substitute median otherwise"""
-    N,D=tx.shape
-    for i in range(D):
-        median=np.median(tx[:,i][tx[:,i]!=-999])
-        bad = np.count_nonzero(tx[:,i]==-999)
-        if bad>=0.5*N:
-            tx[:,i]=0
-        tx[:,i]=np.where(tx[:,i]==-999,median,tx[:,i])
-    return tx    
-        
-
-def create_csv_submission(ids, y_pred, name):
-    """
-    Creates an output file in .csv format for submission to Kaggle or AIcrowd
-    Arguments: ids (event ids associated with each prediction)
-               y_pred (predicted class labels)
-               name (string name of .csv output file to be created)
-    """
-    with open(name, "w") as csvfile:
-        fieldnames = ["Id", "Prediction"]
-        writer = csv.DictWriter(csvfile, delimiter=",", fieldnames=fieldnames)
-        writer.writeheader()
-        for r1, r2 in zip(ids, y_pred):
-            writer.writerow({"Id": int(r1), "Prediction": int(r2)})
-
 
 def compute_mse(e):
     """Calculate the MSE
@@ -177,21 +129,53 @@ def lr_gradient_descent_step(y, tx, w, gamma, lambda_):
     w -= gamma * gradient
     return loss, w
 
-def build_k_indices(y, k_fold, seed):
+def build_k_indices(num_row, k_fold, seed):
     """build k indices for k-fold.
     
     Args:
-        y:      shape=(N,)
-        k_fold: K in K-fold, i.e. the fold num
-        seed:   the random seed
+        num_row: a scalar
+        k_fold:  K in K-fold, i.e. the fold num
+        seed:    a scalar indicating the random seed
 
     Returns:
         A 2D array of shape=(k_fold, N/k_fold) that indicates the data indices for each fold
 
     """
-    num_row = y.shape[0]
+
     interval = int(num_row / k_fold)
     np.random.seed(seed)
     indices = np.random.permutation(num_row)
     k_indices = [indices[k * interval: (k + 1) * interval] for k in range(k_fold)]
     return np.array(k_indices)
+
+def cross_validation(y, x, k_indices, k, lambda_, degree):
+    """return the loss of ridge regression for a fold corresponding to k_indices
+    
+    Args:
+        y:          shape=(N,)
+        x:          shape=(N,)
+        k_indices:  2D array returned by build_k_indices()
+        k:          scalar, the k-th fold (N.B.: not to confused with k_fold which is the fold nums)
+        lambda_:    scalar, cf. ridge_regression()
+        degree:     scalar, cf. build_poly()
+
+    Returns:
+        train and test root mean square errors rmse = sqrt(2 mse)
+
+    >>> cross_validation(np.array([1.,2.,3.,4.]), np.array([6.,7.,8.,9.]), np.array([[3,2], [0,1]]), 1, 2, 3)
+    (0.019866645527597114, 0.33555914361295175)
+    """
+    
+    train_id = np.delete(k_indices, k, axis=0).ravel()
+    test_id = k_indices[k]
+    
+    x_tr, y_tr = x[train_id], y[train_id]
+    x_te, y_te = x[test_id], y[test_id]
+    
+    x_tr_p, x_te_p = build_poly(x_tr,degree), build_poly(x_te,degree)
+
+    weights = ridge_regression(y_tr, x_tr_p, lambda_)
+    
+    loss_tr, loss_te = np.sqrt(2*compute_mse(y_tr,x_tr_p,weights)), np.sqrt(2*compute_mse(y_te,x_te_p,weights))
+    
+    return loss_tr, loss_te
