@@ -11,6 +11,6 @@
 
 - Then we faced a ML competition hosted by the [AIcrowd](https://www.aicrowd.com/) platform, based on the [dataset](http://opendata.cern.ch/record/328) from CERN on the Higgs Boson.
 
-> Our team is called MLE, which is both an acronym of our names (Matteo, Leonardo, Emanele)and a tribute to the [Maximum-likelihood estimation](https://en.wikipedia.org/wiki/Maximum_likelihood_estimation) :grin:
+> Our team is called MLE, which is both an acronym of our names (Matteo, Leonardo, Emanuele)and a tribute to the [Maximum-likelihood estimation](https://en.wikipedia.org/wiki/Maximum_likelihood_estimation) :grin:
 
 > You can learn more by reading the [project description](ProjectDescription.pdf).
