@@ -62,6 +62,18 @@ def delete_outliers(tx, a):
         tx[:,i][tx[:,i]>np.quantile(tx[:,i],1-a)] = np.quantile(tx[:,i],1-a)
     return tx
 
+
+def standardize(tx, mean=None, std=None):
+    """
+    Standardize the original data set
+    """
+    mean = np.mean(tx)
+    tx = tx - mean
+    std = np.std(tx)
+    tx = tx / std
+
+    return tx
+
 def pre_processing(x_tr, x_te, degree, gamma):
     """Process the training and test set
     
