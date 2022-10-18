@@ -46,7 +46,7 @@ def compute_mse(e):
     Returns:
         the value of the loss (a scalar)
     """
-    return 1/2*np.mean(e**2)
+    return np.mean(e**2) / 2
 
 def compute_loss(y, tx, w):
     """Calculate the loss using MSE
@@ -104,6 +104,7 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
          if start_index != end_index:
              yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
 
+
 def sigmoid(t):
     """Applies sigmoid function on t.
     
@@ -158,9 +159,10 @@ def lr_gradient_descent_step(y, tx, w, gamma, lambda_):
     Returns:
         w: the linear parameters.
         loss: the loss given w as parameters.
-        
+
     """
     loss = lr_calculate_loss(y, tx, w) + lambda_/2 * np.power(np.linalg.norm(w), 2)
     gradient = lr_calculate_gradient(y, tx, w) + lambda_ * w
     w -= gamma * gradient
     return loss, w
+
