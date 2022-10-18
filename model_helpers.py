@@ -181,9 +181,7 @@ def cross_validation(y, x, k_indices, k, lambda_, degree):
     return loss_tr, loss_te
 
 def build_poly(tx, deg):
-    """
-    Polynomial aggregation (0-degree)
-    """
+    """Polynomial aggregation (0-degree)"""
     N, D = tx.shape
     tx_poly = np.zeros(shape=(N,deg*D+1))
     tx_poly[:,0] = np.ones(N)
@@ -191,3 +189,11 @@ def build_poly(tx, deg):
         for i in range(D):
             x_poly[:,D*(degree-1)+(i+1)] = np.power(tx[:,i],degree)
     return tx_poly
+
+def compute_accuracy(y_prediction, y):
+    """Given the predictions and the test data: computes accuracy"""
+    corrects = 0
+    for i, y_te in enumerate(y):
+        if y_te == y_prediction[i]:
+            corrects += 1
+    return corrects / len(y)
