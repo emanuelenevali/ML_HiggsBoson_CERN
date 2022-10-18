@@ -112,15 +112,15 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
     """Implement logistic regression.
 
     Args:
-        y: array that contains the correct values to be predicted.
-        tx: matrix that contains the data points. 
-        initial_w: array containing the linear parameters to start with.
-        max_iters: the maximum number of iterations to do.
-        gamma: gradient descent stepsize
+        y: numpy array of shape (N,), N is the number of samples.
+        tx: numpy array of shape (N,D), D is the number of features.
+        initial_w: initial_w: numpy array of shape=(2, ). The initial guess (or the initialization) for the model parameters
+        max_iters: a scalar denoting the total number of iterations of SGD
+        gamma: a scalar denoting the stepsize
     
     Returns:
-        w: the linear parameters.
-        loss: the loss given w as parameters.
+        w: optimal weights, numpy array of shape(D,), D is the number of features.
+        loss: scalar denoting the loss
 
     """
     return reg_logistic_regression(y, tx, 0, initial_w, max_iters, gamma)
@@ -130,16 +130,16 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     """Implement regularized logistic linear.
     
     Args:
-        y: array that contains the correct values to be predicted.
-        tx: matrix that contains the data points. 
-        lambda_: the lambda used for regularization.
-        initial_w: array containing the linear parameters to start with.
-        max_iters: the maximum number of iterations to do.
-        gamma: gradient descent stepsize.
+        y: numpy array of shape (N,), N is the number of samples.
+        tx: numpy array of shape (N,D), D is the number of features.
+        lambda_: a scalar denoting the lambda used for regularization.
+        initial_w: initial_w: numpy array of shape=(2, ). The initial guess (or the initialization) for the model parameters
+        max_iters: a scalar denoting the total number of iterations of SGD
+        gamma: a scalar denoting the stepsize
     
     Returns:
-        w: the linear parameters.
-        loss: the loss given w as parameters.
+        w: optimal weights, numpy array of shape(D,), D is the number of features.
+        loss: scalar denoting the loss
 
     """
     threshold = 1e-9
