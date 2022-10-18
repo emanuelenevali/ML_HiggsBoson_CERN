@@ -61,3 +61,20 @@ def delete_outliers(tx, a):
         tx[:,i][tx[:,i]<np.quantile(tx[:,i],a)] = np.quantile(tx[:,i],a)
         tx[:,i][tx[:,i]>np.quantile(tx[:,i],1-a)] = np.quantile(tx[:,i],1-a)
     return tx
+
+def pre_processing(x_tr, x_te, degree, gamma):
+    """Process the training and test set
+    
+    Args:
+        x: numpy array that contains the data points for training.
+        x_te: matrix that contains the data points for testing.
+        degree: degree of polynomial expansion
+        gamma: percentile from which to start clamping outliers on both sides
+    
+    Returns:
+        x_tr: training data.
+        x_te: testing data.
+
+    """
+
+    return x_tr, x_te

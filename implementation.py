@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from helpers import *
+from model_helpers import *
 
 def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
     """Linear regression using the gradient descent and the mean squared error as loss function.

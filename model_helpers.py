@@ -1,4 +1,5 @@
 import numpy as np
+from data_helpers import *
 
 def compute_mse(e):
     """Calculate the MSE
@@ -129,6 +130,7 @@ def lr_gradient_descent_step(y, tx, w, gamma, lambda_):
     w -= gamma * gradient
     return loss, w
 
+
 def build_k_indices(num_row, k_fold, seed):
     """build k indices for k-fold.
     
@@ -147,35 +149,3 @@ def build_k_indices(num_row, k_fold, seed):
     indices = np.random.permutation(num_row)
     k_indices = [indices[k * interval: (k + 1) * interval] for k in range(k_fold)]
     return np.array(k_indices)
-
-def cross_validation(y, x, k_indices, k, lambda_, degree):
-    """return the loss of ridge regression for a fold corresponding to k_indices
-    
-    Args:
-        y:          shape=(N,)
-        x:          shape=(N,)
-        k_indices:  2D array returned by build_k_indices()
-        k:          scalar, the k-th fold (N.B.: not to confused with k_fold which is the fold nums)
-        lambda_:    scalar, cf. ridge_regression()
-        degree:     scalar, cf. build_poly()
-
-    Returns:
-        train and test root mean square errors rmse = sqrt(2 mse)
-
-    >>> cross_validation(np.array([1.,2.,3.,4.]), np.array([6.,7.,8.,9.]), np.array([[3,2], [0,1]]), 1, 2, 3)
-    (0.019866645527597114, 0.33555914361295175)
-    """
-    
-    train_id = np.delete(k_indices, k, axis=0).ravel()
-    test_id = k_indices[k]
-    
-    x_tr, y_tr = x[train_id], y[train_id]
-    x_te, y_te = x[test_id], y[test_id]
-    
-    x_tr_p, x_te_p = build_poly(x_tr,degree), build_poly(x_te,degree)
-
-    weights = ridge_regression(y_tr, x_tr_p, lambda_)
-    
-    loss_tr, loss_te = np.sqrt(2*compute_mse(y_tr,x_tr_p,weights)), np.sqrt(2*compute_mse(y_te,x_te_p,weights))
-    
-    return loss_tr, loss_te
