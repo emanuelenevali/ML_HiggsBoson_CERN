@@ -46,7 +46,7 @@ def compute_mse(e):
     Returns:
         the value of the loss (a scalar)
     """
-    return 1/2*np.mean(e**2)
+    return np.mean(e**2) / 2
 
 def compute_loss(y, tx, w):
     """Calculate the loss using MSE
@@ -158,7 +158,7 @@ def lr_gradient_descent_step(y, tx, w, gamma, lambda_):
     Returns:
         w: the linear parameters.
         loss: the loss given w as parameters.
-        
+
     """
     loss = lr_calculate_loss(y, tx, w) + lambda_/2 * np.power(np.linalg.norm(w), 2)
     gradient = lr_calculate_gradient(y, tx, w) + lambda_ * w
