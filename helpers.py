@@ -21,6 +21,19 @@ def load_csv_data(data_path, sub_sample=False):
 
     return yb, input_data, ids
 
+def cleaning_data(tx):
+    """ preprocessing data: delete columns with more than 50% missing values or substitute median otherwise"""
+    N,D=tx.shape
+    for i in range(D):
+        median=np.median(tx[:,i][tx[:,i]!=-999])
+        bad = np.count_nonzero(tx[:,i]==-999)
+        if bad>=0.5*N:
+            tx[:,i]=0
+        tx[:,i]=np.where(tx[:,i]==-999,median,tx[:,i])
+    return tx    
+        
+
+
 
 def create_csv_submission(ids, y_pred, name):
     """
