@@ -52,9 +52,9 @@ def compute_loss(y, tx, w):
     """Calculate the loss using MSE
 
     Args:
-        y: numpy array of shape=(N, )
+        y:  numpy array of shape=(N, )
         tx: numpy array of shape=(N,2)
-        w: numpy array of shape=(2, ). The vector of model parameters.
+        w:  numpy array of shape=(2, ). The vector of model parameters.
 
     Returns:
         the value of the loss (a scalar), corresponding to the input parameters w.
@@ -67,13 +67,13 @@ def compute_gradient(y, tx, w):
     """Computes the gradient at w.
         
     Args:
-        y: numpy array of shape=(N, )
+        y:  numpy array of shape=(N, )
         tx: numpy array of shape=(N,2)
-        w: numpy array of shape=(2, ). The vector of model parameters.
+        w:  numpy array of shape=(2, ). The vector of model parameters.
         
     Returns:
         gradient: an numpy array of shape (2, ) (same shape as w), containing the gradient of the loss at w.
-        e: scalar denotin the loss (MSE)
+        e:        scalar denotin the loss (MSE)
     """
     e = y - np.dot(tx, w)
     gradient = -1/len(e) * np.dot(tx.T,e)
@@ -121,9 +121,9 @@ def lr_calculate_loss(y, tx, w):
     """"Loss for logistic regression.
     
     Args:
-        y: array that contains the correct values to be predicted.
+        y:  array that contains the correct values to be predicted.
         tx: matrix that contains the data points. 
-        w: array containing the linear parameters to test.
+        w:  array containing the linear parameters to test.
     
     Returns:
         loss: the loss for the given logistic linear parameters.
@@ -136,9 +136,9 @@ def lr_calculate_gradient(y, tx, w):
     """"Compute the logistic gradient.
     
     Args:
-        y: array that contains the correct values to be predicted.
+        y:  array that contains the correct values to be predicted.
         tx: atrix that contains the data points. 
-        w: array containing the linear parameters to test.
+        w:  array containing the linear parameters to test.
     
     Returns:
         gradient: the gradient for the given logistic parameters.
@@ -150,14 +150,14 @@ def lr_gradient_descent_step(y, tx, w, gamma, lambda_):
     """Computes one step of gradient descent for the logistic regression.
     
     Args:
-        y: array that contains the correct values to be predicted.
-        tx: matrix that contains the data points. 
-        w: array containing the linear parameters to test.
-        gamma: the stepsize.
+        y:       array that contains the correct values to be predicted.
+        tx:      matrix that contains the data points. 
+        w:       array containing the linear parameters to test.
+        gamma:   the stepsize.
         lambda_: the lambda used for regularization. Default behavior is without regularization.
     
     Returns:
-        w: the linear parameters.
+        w:    the linear parameters.
         loss: the loss given w as parameters.
 
     """
@@ -166,3 +166,21 @@ def lr_gradient_descent_step(y, tx, w, gamma, lambda_):
     w -= gamma * gradient
     return loss, w
 
+def build_k_indices(y, k_fold, seed):
+    """build k indices for k-fold.
+    
+    Args:
+        y:      shape=(N,)
+        k_fold: K in K-fold, i.e. the fold num
+        seed:   the random seed
+
+    Returns:
+        A 2D array of shape=(k_fold, N/k_fold) that indicates the data indices for each fold
+
+    """
+    num_row = y.shape[0]
+    interval = int(num_row / k_fold)
+    np.random.seed(seed)
+    indices = np.random.permutation(num_row)
+    k_indices = [indices[k * interval: (k + 1) * interval] for k in range(k_fold)]
+    return np.array(k_indices)
