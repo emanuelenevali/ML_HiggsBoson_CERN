@@ -104,6 +104,7 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
          if start_index != end_index:
              yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
 
+
 def sigmoid(t):
     """Applies sigmoid function on t.
     
@@ -164,3 +165,4 @@ def lr_gradient_descent_step(y, tx, w, gamma, lambda_):
     gradient = lr_calculate_gradient(y, tx, w) + lambda_ * w
     w -= gamma * gradient
     return loss, w
+
