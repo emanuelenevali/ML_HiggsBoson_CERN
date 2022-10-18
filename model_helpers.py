@@ -179,3 +179,15 @@ def cross_validation(y, x, k_indices, k, lambda_, degree):
     loss_tr, loss_te = np.sqrt(2*compute_mse(y_tr,x_tr_p,weights)), np.sqrt(2*compute_mse(y_te,x_te_p,weights))
     
     return loss_tr, loss_te
+
+def build_poly(tx, deg):
+    """
+    Polynomial aggregation (0-degree)
+    """
+    N, D = tx.shape
+    tx_poly = np.zeros(shape=(N,deg*D+1))
+    tx_poly[:,0] = np.ones(N)
+    for degree in range(1,deg+1):
+        for i in range(D):
+            x_poly[:,D*(degree-1)+(i+1)] = np.power(tx[:,i],degree)
+    return tx_poly
