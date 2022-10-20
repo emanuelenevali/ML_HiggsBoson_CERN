@@ -93,8 +93,8 @@ def lr_calculate_loss(y, tx, w):
         loss: the loss for the given logistic linear parameters.
 
     """
-    m = tx.dot(w)
-    return np.sum(np.log(1 + np.exp(m)) - y*m)
+    dot = tx@w
+    return -np.mean(y*np.log(sigmoid(dot)) + (1-y)*np.log(1-sigmoid(dot)))
 
 def lr_calculate_gradient(y, tx, w):
     """"Compute the logistic gradient.
@@ -108,27 +108,25 @@ def lr_calculate_gradient(y, tx, w):
         gradient: the gradient for the given logistic parameters.
 
     """
-    return tx.T.dot((sigmoid(tx.dot(w)) - y))
+    return (tx.T@(sigmoid(tx@w)-y)) / y.shape[0]
 
-def lr_gradient_descent_step(y, tx, w, gamma, lambda_):
-    """Computes one step of gradient descent for the logistic regression.
-    
-    Args:
-        y:       array that contains the correct values to be predicted.
-        tx:      matrix that contains the data points. 
-        w:       array containing the linear parameters to test.
-        gamma:   the stepsize.
-        lambda_: the lambda used for regularization. Default behavior is without regularization.
-    
-    Returns:
-        w:    the linear parameters.
-        loss: the loss given w as parameters.
-
+def reg_lr_compute_loss(y, tx, w, lambda_):
     """
-    loss = lr_calculate_loss(y, tx, w) + lambda_/2 * np.power(np.linalg.norm(w), 2)
-    gradient = lr_calculate_gradient(y, tx, w) + lambda_ * w
-    w -= gamma * gradient
-    return loss, w
+    Computation of the regularized logistic loss (negative log likelihood)
+    INPUTS: y = target, tx = sample matrix, w = weights vector
+    OUTPUTS: evaluation of the loss
+    """
+    return lr_calculate_loss(y,tx,w) + lambda_*np.linalg.norm(w,2)*2
+
+
+def reg_lr_compute_gradient(y, tx, w, lambda_):
+    """
+    Computation of the gradient of the regularized logistic loss (negative log likelihood)
+    INPUTS: y = target, tx = sample matrix, w = weights vector
+    OUTPUTS: evaluation of the gradient of the loss
+    """
+    return lr_calculate_gradient(y,tx,w) + 2*lambda_*w
+
 
 
 def build_k_indices(num_row, k_fold, seed):
@@ -150,37 +148,6 @@ def build_k_indices(num_row, k_fold, seed):
     k_indices = [indices[k * interval: (k + 1) * interval] for k in range(k_fold)]
     return np.array(k_indices)
 
-def cross_validation(y, x, k_indices, k, lambda_, degree):
-    """return the loss of ridge regression for a fold corresponding to k_indices
-    
-    Args:
-        y:          shape=(N,)
-        x:          shape=(N,)
-        k_indices:  2D array returned by build_k_indices()
-        k:          scalar, the k-th fold (N.B.: not to confused with k_fold which is the fold nums)
-        lambda_:    scalar, cf. ridge_regression()
-        degree:     scalar, cf. build_poly()
-
-    Returns:
-        train and test root mean square errors rmse = sqrt(2 mse)
-
-    >>> cross_validation(np.array([1.,2.,3.,4.]), np.array([6.,7.,8.,9.]), np.array([[3,2], [0,1]]), 1, 2, 3)
-    (0.019866645527597114, 0.33555914361295175)
-    """
-    
-    train_id = np.delete(k_indices, k, axis=0).ravel()
-    test_id = k_indices[k]
-    
-    x_tr, y_tr = x[train_id], y[train_id]
-    x_te, y_te = x[test_id], y[test_id]
-    
-    x_tr_p, x_te_p = build_poly(x_tr,degree), build_poly(x_te,degree)
-
-    weights = ridge_regression(y_tr, x_tr_p, lambda_)
-    
-    loss_tr, loss_te = np.sqrt(2*compute_mse(y_tr,x_tr_p,weights)), np.sqrt(2*compute_mse(y_te,x_te_p,weights))
-    
-    return loss_tr, loss_te
 
 def build_poly(tx, deg):
     """Polynomial aggregation (0-degree)"""
@@ -189,7 +156,7 @@ def build_poly(tx, deg):
     tx_poly[:,0] = np.ones(N)
     for degree in range(1,deg+1):
         for i in range(D):
-            x_poly[:,D*(degree-1)+(i+1)] = np.power(tx[:,i],degree)
+            tx_poly[:,D*(degree-1)+(i+1)] = np.power(tx[:,i],degree)
     return tx_poly
 
 def compute_accuracy(y_prediction, y):
