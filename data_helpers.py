@@ -74,19 +74,7 @@ def standardize(tx, mean=None, std=None):
 
     return tx
 
-def pre_processing(x_tr, x_te, degree, gamma):
-    """Process the training and test set
+def pre_processing(x_tr, x_te):
     
-    Args:
-        x: numpy array that contains the data points for training.
-        x_te: matrix that contains the data points for testing.
-        degree: degree of polynomial expansion
-        gamma: percentile from which to start clamping outliers on both sides
-    
-    Returns:
-        x_tr: training data.
-        x_te: testing data.
-
-    """
 
     return x_tr, x_te
