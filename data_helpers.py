@@ -10,7 +10,7 @@ def load_csv_data(data_path, sub_sample=False):
 
     # convert class labels from strings to binary (-1,1)
     yb = np.ones(len(y))
-    yb[np.where(y == "b")] = -1
+    yb[np.where(y == "b")] = 0
 
     # sub-sample
     if sub_sample:
@@ -18,24 +18,13 @@ def load_csv_data(data_path, sub_sample=False):
         input_data = input_data[::50]
         ids = ids[::50]
 
-    return yb, input_data, ids
-
-def cleaning_data(tx):
-    """ preprocessing data: delete columns with more than 50% missing values or substitute median otherwise"""
-    N,D=tx.shape
-    for i in range(D):
-        median=np.median(tx[:,i][tx[:,i]!=-999])
-        '''bad = np.count_nonzero(tx[:,i]==-999)
-        if bad>=0.5*N:
-            tx[:,i]=0'''
-        tx[:,i]=np.where(tx[:,i]==-999,median,tx[:,i])
-    return tx    
+    return yb, input_data, ids 
         
 def predict_labels(tx, w):
     """Return prediction given the data and the weights"""
     y = np.dot(tx, w)
-    y[np.where(y <= 0)] = -1
-    y[np.where(y > 0)] = 1
+    y[np.where(y <= 0.5)] = 0
+    y[np.where(y > 0.5)] = 1
     return y
 
 def create_csv_submission(ids, y_pred, name):
@@ -45,15 +34,23 @@ def create_csv_submission(ids, y_pred, name):
                y_pred (predicted class labels)
                name (string name of .csv output file to be created)
     """
+    y_pred[np.where(y_pred == 0)] = -1
     with open(name, "w") as csvfile:
         fieldnames = ["Id", "Prediction"]
         writer = csv.DictWriter(csvfile, delimiter=",", fieldnames=fieldnames)
         writer.writeheader()
         for r1, r2 in zip(ids, y_pred):
             writer.writerow({"Id": int(r1), "Prediction": int(r2)})
+
+def cleaning_data(tx):
+    """ preprocessing data: delete columns with more than 50% missing values or substitute median otherwise"""
+    D=tx.shape[1]
+    for i in range(D):
+        median=np.median(tx[:,i][tx[:,i]!=-999])
+        tx[:,i]=np.where(tx[:,i]==-999,median,tx[:,i])
+    return tx       
             
-            
-def delete_outliers(tx, a=.05):
+def delete_outliers(tx, a=0.1):
     """
     Delete the tails of tx given the quantile a
     """
@@ -66,7 +63,7 @@ def get_mask(tx):
     return [tx[:, 22] == 0, tx[:, 22] == 1, tx[:, 22] == 2, tx[:, 22] == 3]
 
 def abs_transform(tx):
-    for c in [14, 17, 24, 27]:
+    for c in [14, 17, 23, 26]:
         tx[:, c] = abs(tx[:, c])
     return tx
 
