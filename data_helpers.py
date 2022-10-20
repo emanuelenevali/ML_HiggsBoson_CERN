@@ -25,9 +25,9 @@ def cleaning_data(tx):
     N,D=tx.shape
     for i in range(D):
         median=np.median(tx[:,i][tx[:,i]!=-999])
-        bad = np.count_nonzero(tx[:,i]==-999)
+        '''bad = np.count_nonzero(tx[:,i]==-999)
         if bad>=0.5*N:
-            tx[:,i]=0
+            tx[:,i]=0'''
         tx[:,i]=np.where(tx[:,i]==-999,median,tx[:,i])
     return tx    
         
@@ -53,7 +53,7 @@ def create_csv_submission(ids, y_pred, name):
             writer.writerow({"Id": int(r1), "Prediction": int(r2)})
             
             
-def delete_outliers(tx, a):
+def delete_outliers(tx, a=.05):
     """
     Delete the tails of tx given the quantile a
     """
@@ -62,12 +62,13 @@ def delete_outliers(tx, a):
         tx[:,i][tx[:,i]>np.quantile(tx[:,i],1-a)] = np.quantile(tx[:,i],1-a)
     return tx
 
+def get_mask(tx):
+    return [tx[:, 22] == 0, tx[:, 22] == 1, tx[:, 22] == 2, tx[:, 22] == 3]
 
-def get_filter_jet_data(tx, jet):
-    """Select the rows with only a selected num_jet"""
-    filtered=np.where(tx[:, 22]==jet)
-    return filtered
-
+def abs_transform(tx):
+    for c in [14, 17, 24, 27]:
+        tx[:, c] = abs(tx[:, c])
+    return tx
 
 def standardize(tx, mean=None, std=None):
     """
@@ -80,19 +81,23 @@ def standardize(tx, mean=None, std=None):
 
     return tx
 
-def pre_processing(x_tr, x_te, degree, gamma):
-    """Process the training and test set
-    
-    Args:
-        x: numpy array that contains the data points for training.
-        x_te: matrix that contains the data points for testing.
-        degree: degree of polynomial expansion
-        gamma: percentile from which to start clamping outliers on both sides
-    
-    Returns:
-        x_tr: training data.
-        x_te: testing data.
+def heavy_tail(x):
+    idx = [0,1,2,9,13,16,19,21,22,25]
+    x_log1p = np.log1p(x[:, idx])
+    return np.hstack((x, x_log1p))
 
-    """
+def pre_processing(x):
 
-    return x_tr, x_te
+    x = cleaning_data(x)
+
+    x = np.delete(x, 22, axis=1)
+
+    x = heavy_tail(x)
+
+    x = abs_transform(x)
+
+    x = delete_outliers(x)
+
+    x = standardize(x)
+
+    return x

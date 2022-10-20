@@ -123,7 +123,13 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
         loss: scalar denoting the loss
 
     """
-    return reg_logistic_regression(y, tx, 0, initial_w, max_iters, gamma)
+    w = initial_w
+    for _ in range(max_iters):
+        loss = lr_calculate_loss(y,tx,w)
+        g = lr_calculate_gradient(y,tx,w)
+        w = w - gamma*g
+ 
+    return w, loss
 
 
 def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
@@ -142,12 +148,10 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
         loss: scalar denoting the loss
 
     """
-    threshold = 1e-9
-    losses = []
     w = initial_w
     for _ in range(max_iters):
-        loss, w = lr_gradient_descent_step(y, tx, w, gamma, lambda_)
-        losses.append(loss)
-        if len(losses) > 1 and np.abs(losses[-1] - losses[-2]) < threshold:
-            break
-    return w, losses[-1]
+        loss = reg_lr_compute_loss(y,tx,w, lambda_)
+        g = reg_lr_compute_gradient(y,tx,w, lambda_)
+        w = w - gamma*g
+
+    return w, loss
