@@ -150,8 +150,8 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     """
     w = initial_w
     for _ in range(max_iters):
-        loss = reg_lr_compute_loss(y,tx,w, lambda_)
-        g = reg_lr_compute_gradient(y,tx,w, lambda_)
+        loss = reg_lr_compute_loss(y,tx,w,lambda_)
+        g = reg_lr_compute_gradient(y,tx,w,lambda_)
         w = w - gamma*g
 
     return w, loss

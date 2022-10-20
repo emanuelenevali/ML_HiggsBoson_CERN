@@ -116,7 +116,7 @@ def reg_lr_compute_loss(y, tx, w, lambda_):
     INPUTS: y = target, tx = sample matrix, w = weights vector
     OUTPUTS: evaluation of the loss
     """
-    return lr_calculate_loss(y,tx,w) + lambda_*np.linalg.norm(w,2)*2
+    return lr_calculate_loss(y,tx,w) + lambda_*(np.linalg.norm(w,2)**2)
 
 
 def reg_lr_compute_gradient(y, tx, w, lambda_):
