@@ -63,6 +63,12 @@ def delete_outliers(tx, a):
     return tx
 
 
+def get_filter_jet_data(tx, jet):
+    """Select the rows with only a selected num_jet"""
+    filtered=np.where(tx[:, 22]==jet)
+    return filtered
+
+
 def standardize(tx, mean=None, std=None):
     """
     Standardize the original data set
