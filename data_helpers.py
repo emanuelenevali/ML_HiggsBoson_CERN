@@ -111,7 +111,7 @@ def heavy_tail(x):
     x_log1p = np.log1p(x[:, column_ids])
 
     # delete old columns
-    np.delete(x_log1p, column_ids, axis=1)
+    x = np.delete(x_log1p, column_ids, axis=1)
 
     return np.hstack((x, x_log1p))
 
