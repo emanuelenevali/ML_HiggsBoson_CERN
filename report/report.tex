@@ -5,7 +5,7 @@
 
 
 \begin{document}
-\title{Higgs boson discovery through Machine Learning techniques}
+\title{The Higgs boson Machine Learning Challenge}
 
 \author{
   Emanuele Nevali, Matteo Suez, Leonardo Bruno Trentini\\
@@ -15,33 +15,76 @@
 \maketitle
 
 \begin{abstract}
-In this project, we applied machine learning techniques to actual CERN particle accelerator data to recreate the process of
+In this project, carried out as part of the 2022 Machine Learnng course at EPFL, we applied machine learning techniques to actual CERN particle accelerator data to recreate the process of
 “discovering” the Higgs particle.\\
-Rarely, collisions between protons at high speed can produce a Higgs boson. Since the Higgs boson decays rapidly into other particles, it is not possible to observe it directly, but rather measure its “decay signature”, or the products that result from its decay process. The aim of this project is to estimate the likelihood that a given event’s signature was the result of a Higgs boson (signal) or some other process/particle (background).\\
 \end{abstract}
 
+\section{Introduction}
+Rarely, collisions between protons at high speed can produce a Higgs boson. Since the Higgs boson decays rapidly into other particles, it is not possible to observe it directly, but rather measure its “decay signature”, or the products that result from its decay process. The aim of this project is to estimate the likelihood that a given event’s signature was the result of a Higgs boson (signal) or some other process/particle (background).\\
+After analysis and preprocessing of the dataset, we introduce the model built with the 6 demanded algorithms and we explain how we managed to choose the best hyperparameters. In conclusion, we present our results.
+
+\section{Data analysis and preprocessing}
+
+\subsection{Exploratory data analysis}
+Our dataset contains 250000 points for training and 568238
+for testing with their corresponding binary label (“s” for “signal” and “b” for “background”, which have to be predicted for the test set values). All of these points are characterized by 30 different features. \\
+\vspace{-0.7cm}\\
+
+\subsection{Categorization}
+First of all, we notice that there is only one categorical feature, i.e. \textit{Pri jet num}: it shows the number of jets (see \cite{higgs} for a physical explanation), and it is an integer that ranges from 0 to 3. \\
+We noticed that some features are meaningless for some values of jets, therefore we have split the dataset into 4 subclasses, each one characterized by a different \textit{Pri jet num}.\\
+\vspace{-0.7cm}\\
+
+\subsection{Missing Values}
+Thanks to the documentation, we noticed that each “-999” value
+in the dataset consists in a missing value: we decided to replace all of them with the median of the feature. In particular, we chose to use the median instead of the mean because of its nature of robust estimator to outliers.\\
+\vspace{-0.7cm}\\
+
+\subsection{Heavy-tailed features}
+Noticing that many of the features were heavy-tailed, we
+computed for these a logaritmic transformation: $x_{k}^{*} = log(1+x_k)$ (where $k$ is the feature column). These transformation  helps in reducing or removing the skewness of our original data.\\
+\vspace{-0.7cm}\\
+
+\subsection{Absolute transform of Symmetrical Features}
+For features whose distribution is symmetric around 0 and
+for which the proportion of categories is not too even (in particular, features in columns [14, 17, 23, 26]) , we calculated and replaced with the absolute value.\\
+This increases the gap between the two categories, and makes them better distinguishable by the model. \\
+\vspace{-0.7cm}\\
+
+\subsection{Outliers erasure}
+After a search for outliers in the data, we set $\alpha = 0.1$ and decided to edge the extreme values of each feature to the $\alpha$-quantile (for the lower tail) and to the $(1-\alpha)$-quantile (for the upper tail).\\
+\vspace{-0.7cm}\\
+
+
+\subsection{Standardization}
+In order to ensure a better functioning of our algorithms, we decided to standardize the data by subtracting from each feature its mean and dividing by its standard deviation: $Z=\frac{X-\mu}{\sigma}$. The same process was applied both to the train set and to the test set.\\
+\vspace{-0.7cm}\\
+
+\subsection{Polynomial Expansion}
+We tried also to improve our predictions by expanding the features In particular, we augmented features by implementing a polynomial expansion for each column of the form $\phi:[X]\rightarrow [X,X^2,...,X^D]$.\\
+The polynomial degree $D$ is one of the hyper-parameters of our model: we found its optimal value by performing a 4-fold cross validation on each subset.
+
 \section{Methods}
-In order to achieve our goal, we managed to find a model for our problem by implementing six different methods:
+After the pre-processing on the dataset, we managed to find a model for our problem by implementing six different methods:
 \begin{itemize}
-    \item Linear regression using gradient descent
-    \item Linear regression using stochastic gradient descent
-    \item Least squares regression using normal equations
-    \item Ridge regression using normal equations
-    \item Logistic regression using gradient descent or stochastic gradient descent ($y \in {0,1}$)
-    \item Regularized logistic regression using gradient descent or stochastic gradient descent ($y \in {0,1}$, with regularization term $ \lambda  \| \omega \|^2$)
+    \item \textbf{Gradient Descent}
+    \item \textbf{Stochastic Gradient Descent}
+    \item \textbf{Least squares} using normal equations
+    \item \textbf{Ridge regression} using normal equations
+    \item \textbf{Logistic regression} using gradient descent or stochastic gradient descent ($y \in {0,1}$)
+    \item \textbf{Regularized logistic regression} using gradient descent or stochastic gradient descent ($y \in {0,1}$, with regularization term $ \lambda  \| \omega \|^2$)
 \end{itemize}
 All functions return: (w, loss), which is the last weight vector of the
-method, and the corresponding loss value (or cost function).
-Then we implemented additional modifications of these basic methods above...\\
-\vspace{0.1cm}\\
-The dataset provided has been cleaned by removing useless features and values, combining others and finding
-better representations of the features to feed your model. We used cross validation technique to train and test our functions.
+method, and the corresponding loss value (or cost function).\\
+\vspace{0.05cm}\\
+Optimal parameters $\lambda$ (regularization to reduce overfitting), $\gamma$ (step size for gradient and stochastic gradient descent) and $D$ (degrees for polynomial expansion) were chosen through a 4-fold cross validation for each subset.
+
+
 
 \section{Results}
 
 bla bla bla\\
 bla bla bla\\
-~\cite{higgs}
 
 \section{Conclusions}
 
