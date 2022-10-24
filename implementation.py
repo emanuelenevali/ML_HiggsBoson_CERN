@@ -116,10 +116,14 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
 
     """
     w = initial_w
+    threshold = 1e-9
+    last_loss = np.Inf
     for _ in range(max_iters):
         loss = lr_calculate_loss(y,tx,w)
         g = lr_calculate_gradient(y,tx,w)
         w = w - gamma*g
+        if abs(loss - last_loss) < threshold:
+            break
  
     return w, loss
 
@@ -142,10 +146,13 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     """
 
     w = initial_w
-
+    threshold = 1e-9
+    last_loss = np.Inf
     for _ in range(max_iters):
         loss = reg_lr_compute_loss(y,tx,w,lambda_)
         g = reg_lr_compute_gradient(y,tx,w,lambda_)
         w = w - gamma*g
-
+        if abs(loss - last_loss) < threshold:
+            break
+        
     return w, loss
