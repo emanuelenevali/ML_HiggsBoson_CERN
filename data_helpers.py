@@ -28,7 +28,7 @@ def predict_labels(tx, w):
     Return prediction given the data and the weights
     """
 
-    y = np.dot(tx, w)
+    y = tx.dot(w)
 
     y[np.where(y <= 0.5)] = 0
     y[np.where(y > 0.5)] = 1
@@ -93,11 +93,11 @@ def abs_transform(tx):
 
     return tx
 
-def standardize(tx, mean=None, std=None):
+def standardize(tx):
     """
     Standardize the original data set
     """
-    mean, std = np.mean(tx), np.std(tx)
+    mean, std = np.mean(tx, axis=0), np.std(tx, axis=0)
 
     return (tx - mean) / std
 
@@ -107,12 +107,10 @@ def heavy_tail(x):
     """
     column_ids = [0, 1, 2, 9, 13, 16, 19, 21, 22, 25]
 
-    x_log1p = np.log1p(x[:, column_ids])
+    for id in column_ids:
+        x[:, id] = np.log1p(x[:, id])
 
-    # delete old columns
-    x = np.delete(x, column_ids, axis=1)
-
-    return np.hstack((x, x_log1p))
+    return x
 
 def del_jet_col(x):
     """
@@ -128,10 +126,15 @@ def pre_processing(x):
     """
 
     x = cleaning_data(x)
+
     x = abs_transform(x)
+
     x = del_jet_col(x)
+
     x = heavy_tail(x)
+
     x = delete_outliers(x)
+
     x = standardize(x)
 
     return x
