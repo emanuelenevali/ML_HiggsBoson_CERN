@@ -1,6 +1,5 @@
 import csv
 import numpy as np
-from pyparsing import col
 
 def load_csv_data(data_path, sub_sample=False):
     """
@@ -87,7 +86,7 @@ def abs_transform(tx):
     """
     Apply the absolute value to features symmetrical distributed around 0
     """
-    column_ids = [14, 17, 23, 26]
+    column_ids = [14, 17, 24, 27]
 
     for c in column_ids:
         tx[:, c] = abs(tx[:, c])
@@ -111,7 +110,7 @@ def heavy_tail(x):
     x_log1p = np.log1p(x[:, column_ids])
 
     # delete old columns
-    x = np.delete(x_log1p, column_ids, axis=1)
+    x = np.delete(x, column_ids, axis=1)
 
     return np.hstack((x, x_log1p))
 
@@ -129,9 +128,9 @@ def pre_processing(x):
     """
 
     x = cleaning_data(x)
+    x = abs_transform(x)
     x = del_jet_col(x)
     x = heavy_tail(x)
-    x = abs_transform(x)
     x = delete_outliers(x)
     x = standardize(x)
 
