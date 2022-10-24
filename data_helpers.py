@@ -101,37 +101,48 @@ def standardize(tx):
 
     return (tx - mean) / std
 
-def heavy_tail(x):
+def heavy_tail(x, column_ids):
     """
     Compute the log transformation for heavy-tailed features
     """
-    column_ids = [0, 1, 2, 9, 13, 16, 19, 21, 22, 25]
 
     for id in column_ids:
         x[:, id] = np.log1p(x[:, id])
 
     return x
 
-def del_jet_col(x):
+def drop_columns(x, column_ids):
     """
     Delete the column representing 
     """
-    jet_col = 22
 
-    return np.delete(x, jet_col, axis=1)
+    return np.delete(x, column_ids, axis=1)
 
-def pre_processing(x):
+def pre_processing(x, idx):
     """
     Wrapper functions to prepare and preprocess the data
     """
+
+    cols_to_drop = {
+        0 : [4, 5, 6, 12, 22, 23, 24, 25, 26, 27, 28, 29],
+        1 : [4, 5, 6, 12, 22, 26, 27, 28],
+        2 : [22],
+        3 : [22],
+    }
+    cols_to_log = {
+        0 : [0, 1, 2, 3, 8, 9, 13, 16, 19, 21],
+        1 : [0, 1, 2, 3, 8, 9, 13, 16, 19, 21, 23, 29],
+        2 : [0, 1, 2, 3, 8, 9, 13, 16, 19, 21, 23, 26, 29],
+        3 : [0, 1, 2, 3, 8, 9, 13, 16, 19, 21, 23, 26, 29],
+    }
 
     x = cleaning_data(x)
 
     x = abs_transform(x)
 
-    x = del_jet_col(x)
+    x = heavy_tail(x, cols_to_log[idx])
 
-    x = heavy_tail(x)
+    x = drop_columns(x, cols_to_drop[idx])
 
     x = delete_outliers(x)
 
