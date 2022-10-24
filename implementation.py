@@ -102,7 +102,7 @@ def ridge_regression(y, tx, lambda_):
     """
     n, d = tx.shape[0], tx.shape[1]
 
-    aI = 2 * tx.shape[n] * lambda_ * np.eye(d)
+    aI = 2 * n * lambda_ * np.eye(d)
     a = tx.T.dot(tx) + aI
     b = tx.T.dot(y)
     
