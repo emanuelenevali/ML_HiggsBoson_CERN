@@ -4,6 +4,8 @@
 
 The repository contains the code for Machine Learning course 2022 (CS-433) project 1, the [Higgs Boson challenge](https://www.aicrowd.com/challenges/epfl-machine-learning-higgs/leaderboards).
 
+> You can learn more by reading the [project description](ProjectDescription.pdf).
+
 ### Our Team
 
 The 'MLE' team roster:
@@ -30,5 +32,3 @@ The data `train.csv` and `test.csv` can be found in [ML_course/project1/data](ht
     6. `reg logistic regression(y, tx, lambda, initial w, max iters, gamma)`
 
 - Then we faced a ML competition hosted by the [AIcrowd](https://www.aicrowd.com/) platform, based on the [dataset](http://opendata.cern.ch/record/328) from CERN on the Higgs Boson.
-
-> You can learn more by reading the [project description](ProjectDescription.pdf).
