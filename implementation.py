@@ -144,7 +144,7 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
         w:    optimal weights, numpy array of shape(D, 1), D is the number of features
         loss: scalar denoting the loss
     """
-
+    
     w = initial_w
     threshold = 1e-9
     last_loss = np.Inf

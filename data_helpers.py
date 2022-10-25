@@ -11,7 +11,7 @@ def load_csv_data(data_path, sub_sample=False):
     ids = x[:, 0].astype(np.int)
     input_data = x[:, 2:]
 
-    # convert class labels from strings to binary (-1,1)
+    # convert class labels from strings to binary (0,1)
     yb = np.ones(len(y))
     yb[np.where(y == "b")] = 0
 
@@ -62,9 +62,9 @@ def cleaning_data(tx, nan_val=-999):
 
     return tx       
             
-def delete_outliers(tx, a=.1):
+def delete_outliers(tx, a=.05):
     """
-    Delete the tails of tx given the quantile a (a=10% by default)
+    Delete the tails of tx given the quantile a (a=5% by default)
     """
 
     for i in range(tx.shape[1]):
