@@ -88,8 +88,7 @@ def abs_transform(tx):
     """
     column_ids = [14, 17, 24, 27]
 
-    for c in column_ids:
-        tx[:, c] = abs(tx[:, c])
+    tx[:, column_ids] = abs(tx[:, column_ids])
 
     return tx
 
@@ -106,8 +105,17 @@ def heavy_tail(x, column_ids):
     Compute the log transformation for heavy-tailed features
     """
 
-    for id in column_ids:
-        x[:, id] = np.log1p(x[:, id])
+    x[:, column_ids] = np.log1p(x[:, column_ids])
+
+    return x
+
+def cos_angles(x):
+    """
+    Tranformation for angles features
+    """
+    column_ids = [15,18,20,25,28]
+
+    x[:,column_ids] = np.cos(x[:, column_ids])
 
     return x
 
@@ -139,6 +147,8 @@ def pre_processing(x, idx):
     x = cleaning_data(x)
 
     x = abs_transform(x)
+
+    x = cos_angles(x)
 
     x = heavy_tail(x, cols_to_log[idx])
 
