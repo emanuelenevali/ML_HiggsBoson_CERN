@@ -92,20 +92,26 @@ def abs_transform(tx):
 
     return tx
 
-def standardize(tx):
+def standardize(tx, mean, std):
     """
     Standardize the original data set
     """
-    mean, std = np.mean(tx, axis=0), np.std(tx, axis=0)
+    
+    std[np.abs(std)< 1e-5] = 0
+    return (tx - mean)[:, std != 0] / std[std != 0]
 
-    return (tx - mean) / std
-
-def heavy_tail(x, column_ids):
+def heavy_tail(x, idx):
     """
     Compute the log transformation for heavy-tailed features
     """
+    cols_to_log = {
+        0 : [0, 1, 2, 3, 8, 9, 13, 16, 19, 21],
+        1 : [0, 1, 2, 3, 8, 9, 13, 16, 19, 21, 23, 29],
+        2 : [0, 1, 2, 3, 8, 9, 13, 16, 19, 21, 23, 26, 29],
+        3 : [0, 1, 2, 3, 8, 9, 13, 16, 19, 21, 23, 26, 29],
+    }
 
-    x[:, column_ids] = np.log1p(x[:, column_ids])
+    x[:, cols_to_log[idx]] = np.log1p(x[:, cols_to_log[idx]])
 
     return x
 
@@ -119,43 +125,45 @@ def cos_angles(x):
 
     return x
 
-def drop_columns(x, column_ids):
+def drop_columns(x, idx):
     """
     Delete the column representing 
     """
+    cols_to_drop = {
+            0 : [4, 5, 6, 12, 22, 23, 24, 25, 26, 27, 28, 29],
+            1 : [4, 5, 6, 12, 22, 26, 27, 28],
+            2 : [22],
+            3 : [22],
+        }
 
-    return np.delete(x, column_ids, axis=1)
+    return np.delete(x, cols_to_drop[idx], axis=1)
 
-def pre_processing(x, idx):
+def pre_processing(x_tr, x_te, idx):
     """
     Wrapper functions to prepare and preprocess the data
     """
 
-    cols_to_drop = {
-        0 : [4, 5, 6, 12, 22, 23, 24, 25, 26, 27, 28, 29],
-        1 : [4, 5, 6, 12, 22, 26, 27, 28],
-        2 : [22],
-        3 : [22],
-    }
-    cols_to_log = {
-        0 : [0, 1, 2, 3, 8, 9, 13, 16, 19, 21],
-        1 : [0, 1, 2, 3, 8, 9, 13, 16, 19, 21, 23, 29],
-        2 : [0, 1, 2, 3, 8, 9, 13, 16, 19, 21, 23, 26, 29],
-        3 : [0, 1, 2, 3, 8, 9, 13, 16, 19, 21, 23, 26, 29],
-    }
+    x_tr = cleaning_data(x_tr)
+    x_te = cleaning_data(x_te)
 
-    x = cleaning_data(x)
+    x_tr = abs_transform(x_tr)
+    x_te = abs_transform(x_te)
 
-    x = abs_transform(x)
+    x_tr = delete_outliers(x_tr)
+    x_te = delete_outliers(x_te)
 
-    x = cos_angles(x)
+    x_tr = cos_angles(x_tr)
+    x_te = cos_angles(x_te)
 
-    x = heavy_tail(x, cols_to_log[idx])
+    x_tr = heavy_tail(x_tr, idx)
+    x_te = heavy_tail(x_te, idx)
 
-    x = drop_columns(x, cols_to_drop[idx])
+    x_tr = drop_columns(x_tr, idx)
+    x_te = drop_columns(x_te, idx)
 
-    x = delete_outliers(x)
+    mean, std = np.mean(x_tr, axis=0), np.std(x_tr, axis=0)
 
-    x = standardize(x)
+    x_tr = standardize(x_tr, mean, std)
+    x_te = standardize(x_te, mean, std)
 
-    return x
+    return x_tr, x_te
