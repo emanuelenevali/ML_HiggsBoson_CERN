@@ -86,7 +86,12 @@ All functions return: (w, loss), which is the last weight vector of the
 method, and the corresponding loss value (or cost function).\\
 \vspace{0.05cm}\\
 Optimal parameters $\lambda$ (regularization to reduce overfitting), $\gamma$ (step size for gradient and stochastic gradient descent) and $D$ (degrees for polynomial expansion) were chosen through a 4-fold cross validation for each subset.
-
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.4\textwidth]{report/lambdas.png}
+    \caption{Grid search results for different values of $\lambda$ for each subset}
+    \label{fig:lambdas}
+\end{figure}\\
 
 
 \section{Results}
