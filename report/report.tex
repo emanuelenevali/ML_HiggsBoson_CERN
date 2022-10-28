@@ -38,7 +38,7 @@ We noticed that some features are meaningless for some values of jets, therefore
 \subsection{Missing Values}
 Thanks to the documentation, we noticed that each “-999” value
 in the dataset consists in a missing value: we decided to replace all of them with the median of the feature. In particular, we chose to use the median instead of the mean because of its nature of robust estimator to outliers.\\
-Furthermore, for subclasse marked by \textit{Pri jet num} $0$ and $1$ we decided not to consider columns with too many missing values, in order to avoid singular matrices.\\
+Furthermore, for subclasses marked by \textit{Pri jet num} $0$ and $1$ we decided not to consider columns with too many missing values, in order to avoid singular matrices.\\
 \vspace{-0.8cm}\\
 
 \subsection{Absolute transform of Symmetrical Features}
@@ -86,7 +86,12 @@ All functions return: (w, loss), which is the last weight vector of the
 method, and the corresponding loss value (or cost function).\\
 \vspace{0.05cm}\\
 Optimal parameters $\lambda$ (regularization to reduce overfitting), $\gamma$ (step size for gradient and stochastic gradient descent) and $D$ (degrees for polynomial expansion) were chosen through a 4-fold cross validation for each subset.
-
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.4\textwidth]{report/lambdas.png}
+    \caption{Grid search results for different values of $\lambda$ for each subset}
+    \label{fig:lambdas}
+\end{figure}\\
 
 
 \section{Results}
