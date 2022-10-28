@@ -28,38 +28,45 @@ After analysis and preprocessing of the dataset, we introduce the model built wi
 \subsection{Exploratory data analysis}
 Our dataset contains 250000 points for training and 568238
 for testing with their corresponding binary label (“s” for “signal” and “b” for “background”, which have to be predicted for the test set values). All of these points are characterized by 30 different features. \\
-\vspace{-0.7cm}\\
+\vspace{-0.8cm}\\
 
 \subsection{Categorization}
 First of all, we notice that there is only one categorical feature, i.e. \textit{Pri jet num}: it shows the number of jets (see \cite{higgs} for a physical explanation), and it is an integer that ranges from 0 to 3. \\
 We noticed that some features are meaningless for some values of jets, therefore we have split the dataset into 4 subclasses, each one characterized by a different \textit{Pri jet num}.\\
-\vspace{-0.7cm}\\
+\vspace{-0.8cm}\\
 
 \subsection{Missing Values}
 Thanks to the documentation, we noticed that each “-999” value
 in the dataset consists in a missing value: we decided to replace all of them with the median of the feature. In particular, we chose to use the median instead of the mean because of its nature of robust estimator to outliers.\\
 Furthermore, for subclasse marked by \textit{Pri jet num} $0$ and $1$ we decided not to consider columns with too many missing values, in order to avoid singular matrices.\\
-\vspace{-0.7cm}\\
-
-\subsection{Heavy-tailed features}
-Noticing that many of the features were heavy-tailed, we
-computed for these a logaritmic transformation: $x_{k}^{*} = log(1+x_k)$ (where $k$ is the feature column). These transformation  helps in reducing or removing the skewness of our original data.\\
-\vspace{-0.7cm}\\
+\vspace{-0.8cm}\\
 
 \subsection{Absolute transform of Symmetrical Features}
 For features whose distribution is symmetric around 0 and
 for which the proportion of categories is not too even (in particular, features in columns [14, 17, 23, 26]) , we calculated and replaced with the absolute value.\\
 This increases the gap between the two categories, and makes them better distinguishable by the model. \\
-\vspace{-0.7cm}\\
+\vspace{-0.8cm}\\
 
 \subsection{Outliers erasure}
 After a search for outliers in the data, we set $\alpha = 0.1$ and decided to edge the extreme values of each feature to the $\alpha$-quantile (for the lower tail) and to the $(1-\alpha)$-quantile (for the upper tail).\\
-\vspace{-0.7cm}\\
+\vspace{-0.8cm}\\
+
+\subsection{Angles}
+We noticed that some of the features represents measurements of angles. For this reason, in order to adapt our model to the periodicity, we tried to replace these columns with sine and cosine transformations. However, only the latter appeared to be effective, and it was the only one kept in the final model.\\
+\vspace{-0.8cm}\\
+
+\subsection{Correlated features}
+We observed that the empirical distribution of some of the features was too similar, index of an high correlation between them. By not considering these features, we slightly improved our performance.\\
+\vspace{-0.8cm}\\
+
+\subsection{Heavy-tailed features}
+Noticing that many of the features were heavy-tailed, we computed for these a logaritmic transformation: $x_{k}^{*} = log(1+x_k)$ (where $k$ is the feature column). These transformation  helps in reducing or removing the skewness of our original data.\\
+\vspace{-0.8cm}\\
 
 
 \subsection{Standardization}
 In order to ensure a better functioning of our algorithms, we decided to standardize the data by subtracting from each feature its mean and dividing by its standard deviation: $Z=\frac{X-\mu}{\sigma}$. The same process was applied both to the train set and to the test set.\\
-\vspace{-0.7cm}\\
+\vspace{-0.8cm}\\
 
 \subsection{Polynomial Expansion}
 We tried also to improve our predictions by expanding the features In particular, we augmented features by implementing a polynomial expansion for each column of the form $\phi:[X]\rightarrow [X,X^2,...,X^D]$.\\
@@ -83,16 +90,16 @@ Optimal parameters $\lambda$ (regularization to reduce overfitting), $\gamma$ (s
 
 
 \section{Results}
-Due to the fact that we were facing a binary classification problem, we first focused on the Regularized Logistic Regression. However, in the meanwhile we also carried out multiple tests with Least Squares and Ridge Regression, and surprisingly the latter turned out to be the most effective method.\\
+Due to the fact that we were facing a binary classification problem, we first focused on the Regularized Logistic Regression. However, in the meanwhile we also carried out multiple tests with Least Squares and Ridge Regression, and remarkably the latter turned out to be the most effective method.\\
 For this reason, we focused on calibrating Ridge Regression hyperparameters. We did it by using grid-search method and 4-fold cross-validation, looking for the best compromise between underfitting and overfitting. We adjusted the hyperparameters for
-each of the three subclasses.\\
+each of the four subclasses.\\
 \vspace{0.05cm}\\
-At the end, we obtained a model that achieved an accuracy of 0.829 on both AIcrowd and on local test set.
+At the end, we obtained a model that achieved an accuracy of 0.831 on both AIcrowd and on local test set.
 \section{Conclusions}
 The best performance on the Higgs boson
 challenge, with an accuracy on the test set of
-0.829, was obtained with a Ridge Regression.\\
-It is important to underline that data analysis, cleaning and feature preprocessing played a key role in this task, enabling us to achieve massive improvements in model's accuracy.\\
+0.831, was obtained with a Ridge Regression.\\
+It is important to underline that data analysis, data cleaning and feature preprocessing played a key role in this task, enabling us to achieve massive improvements in model's accuracy.\\
 
 
 
