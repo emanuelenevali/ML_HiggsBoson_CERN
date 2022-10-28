@@ -99,8 +99,6 @@ def standardize(tx, mean, std):
     """
     Standardize the original data set
     """
-    
-    std[np.abs(std)< 1e-5] = 0
     return (tx - mean)[:, std != 0] / std[std != 0]
 
 def heavy_tail(x, idx):

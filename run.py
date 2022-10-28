@@ -3,6 +3,7 @@
 
 from implementation import *
 from data_helpers import *
+import warnings
 
 paths = { 
             'train' : 'data/train.csv',
@@ -13,10 +14,10 @@ paths = {
 N = 4
 
 # For each of the 4 subsets, respectively best lambda and degree
-hyper_params = [(1e-05, 9),
-                (0.0001, 9),
-                (1e-05, 9),
-                (0.001, 6)]
+hyper_params = [(1e-05, 6),
+                (0.0001, 6),
+                (1e-06, 7),
+                (0.001, 5)]
 
 def load_and_prepare_data():
     """
@@ -91,14 +92,15 @@ def main():
     Main function: load and prepare the data, train the model with 
     a ridge regression and generate in the csv the predictions
     """
+    with warnings.catch_warnings():
+        x_tr_subsamples, x_te_subsamples, y_tr_subsamples, y_pred, mask_te, ids_te = load_and_prepare_data()
+        warnings.simplefilter("ignore", category=RuntimeWarning)
 
-    x_tr_subsamples, x_te_subsamples, y_tr_subsamples, y_pred, mask_te, ids_te = load_and_prepare_data()
-    
-    ws = train_model(x_tr_subsamples, y_tr_subsamples, hyper_params)
+        ws = train_model(x_tr_subsamples, y_tr_subsamples, hyper_params)
 
-    generate_predictions(x_te_subsamples, ws, mask_te, y_pred, hyper_params)
+        generate_predictions(x_te_subsamples, ws, mask_te, y_pred, hyper_params)
 
-    create_csv_submission(ids_te, y_pred, paths['submission'])
+        create_csv_submission(ids_te, y_pred, paths['submission'])
 
 
 if __name__ == '__main__':
