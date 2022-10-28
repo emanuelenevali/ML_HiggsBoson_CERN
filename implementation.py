@@ -75,7 +75,9 @@ def least_squares(y, tx):
     a = tx.T.dot(tx)
     b = tx.T.dot(y)
 
-    return (w := np.linalg.solve(a,b)), compute_loss(y, tx, w)
+    w = np.linalg.solve(a,b)
+
+    return w, compute_loss(y, tx, w)
 
 def ridge_regression(y, tx, lambda_):
     """
@@ -97,7 +99,9 @@ def ridge_regression(y, tx, lambda_):
     a = tx.T.dot(tx) + aI
     b = tx.T.dot(y)
     
-    return (w := np.linalg.solve(a, b)), compute_loss(y, tx, w)
+    w = np.linalg.solve(a, b)
+
+    return w, compute_loss(y, tx, w)
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
     """
