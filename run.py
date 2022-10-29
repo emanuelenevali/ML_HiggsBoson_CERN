@@ -74,7 +74,7 @@ def train_model(txs, ys, params):
         x_poly = build_poly(txs[i], degree)
         
         ws.append(ridge_regression(ys[i], x_poly, lambda_=lambda_)[0])
-        
+    
     return ws
 
 def generate_predictions(txs_te, ws, mask_test, y_pred, params):
