@@ -114,6 +114,14 @@ def standardize(tx, mean, std):
     """
     return (tx - mean)[:, std != 0] / std[std != 0]
 
+def correlation(x):
+    """
+    Find highly correlated features (close to 1)
+    """
+    correlation = np.isclose(np.corrcoef(x.T), 1)
+    upper_triangle = np.triu(correlation, 1)
+
+    return np.argwhere(upper_triangle)
 
 def heavy_tail(x, idx):
     """
@@ -142,18 +150,26 @@ def cos_angles(x):
     return x
 
 
-def drop_columns(x, idx):
+def drop_columns(x, idx=None, cols_to_drop=None):
     """
-    Delete the column representing
+    Delete the column with just -999 for each subset
     """
-    cols_to_drop = {
-        0: [4, 5, 6, 12, 22, 23, 24, 25, 26, 27, 28, 29],
-        1: [4, 5, 6, 12, 22, 26, 27, 28],
-        2: [22],
-        3: [22],
-    }
 
-    return np.delete(x, cols_to_drop[idx], axis=1)
+    if cols_to_drop is None:
+        cols_to_drop = {
+            0: [4, 5, 6, 12, 22, 23, 24, 25, 26, 27, 28, 29],
+            1: [4, 5, 6, 12, 22, 26, 27, 28],
+            2: [22],
+            3: [22],
+        }
+        cols_to_drop = cols_to_drop[idx]
+
+    else:
+        if len(cols_to_drop) == 0:
+            return x 
+        cols_to_drop = cols_to_drop[0]
+
+    return np.delete(x, cols_to_drop, axis=1)
 
 
 def pre_processing(x_tr, x_te, idx):
@@ -176,8 +192,12 @@ def pre_processing(x_tr, x_te, idx):
     x_tr = heavy_tail(x_tr, idx)
     x_te = heavy_tail(x_te, idx)
 
-    x_tr = drop_columns(x_tr, idx)
-    x_te = drop_columns(x_te, idx)
+    x_tr = drop_columns(x_tr, idx=idx)
+    x_te = drop_columns(x_te, idx=idx)
+
+    corr_features = correlation(x_tr)
+    x_tr = drop_columns(x_tr, cols_to_drop=corr_features)
+    x_te = drop_columns(x_te, cols_to_drop=corr_features)
 
     mean, std = np.mean(x_tr, axis=0), np.std(x_tr, axis=0)
 
