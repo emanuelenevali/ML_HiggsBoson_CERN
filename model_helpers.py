@@ -189,25 +189,67 @@ def build_k_indices(num_row, k_fold, seed):
 
     return np.array(k_indices)
 
-def build_poly(tx, deg):
+
+
+def power(matrix, n):
+    """ 
+    Compute the th-square of each element of a matrix
     """
-    Polynomial basis functions for input data x, for j=0 up to j=degree
+
+    N, D = matrix.shape
+    r = np.zeros([N,D])
+
+    for i in range(N):
+        for j in range(D):
+            if matrix[i, j]>0:
+                matrix[i, j] = matrix[i, j]**(1/n)
+            else:
+                r[i, j] = -(-matrix[i, j])**(1/n)
+
+    return r 
+
+def build_poly(x, degree):
+    """
+    Polynomial basis functions for input data x, for j=0 up to j=degree, with the
+    adding of square and cubic root (for each feature D)
+    We also have added the product column-wise of each couple of features
     
     Args:
-        tx: numpy array of shape (N,D), N is the number of samples, D is the number of features
+        tx: numpy array of shape (N, D), N is the number of samples, D is the number of features
         deg: integer
         
     Returns:
-        tx_poly: numpy array of shape (N,D*d+1)
-
+        tx_poly: numpy array of shape (N, D*(d+2)+1+couple), with couple the combination without repetition
+        of D elements in groups of 2 -> D*(D-1)/2
     """
-    N, D = tx.shape
 
-    tx_poly = np.zeros(shape=(N,deg*D+1))
-    tx_poly[:,0] = np.ones(N)
+    N, D = x.shape    
+    products, couple = {}, 0
 
-    for degree in range(1,deg+1):
-        for i in range(D):
-            tx_poly[:,D*(degree-1)+(i+1)] = np.power(tx[:,i],degree)
+    # Product feature-wise
+    for i in range(D):
+        for j in range(i+1, D):
+            products[couple] = x[:, i] * x[:, j]
+            couple += 1
+    
+    # Allocate poly
+    poly = np.zeros((N, 1+D*(degree+2)+couple))
 
-    return tx_poly
+    # Ones only on first column (degree=0)
+    poly[:, 0] = np.ones(N)
+    
+    # Then powers from 1 to degree for each feature D
+    for deg in range(1, degree+1):
+        poly[:, D*(deg-1)+1:D*deg+1] = np.power(x, deg)    
+        
+    # Insert the D*(D-1) products of the features combination
+    for i in range(couple):
+        poly[:, D*degree+1+i] = products[i]     
+
+    # Finally put square root 
+    poly[:, D*degree+couple+1:D*degree+couple+D+1] = np.abs(x)**(.5)
+
+    # and cubic root
+    poly[:, D*degree+couple+D+1:] = power(x, 1/3)
+    
+    return poly
