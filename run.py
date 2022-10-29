@@ -68,19 +68,12 @@ def train_model(txs, ys, params):
     
     ws = []
     
-    pred_pcts = []
-    
     for i in range(len(txs)):
         
         lambda_, degree = params[i]
         x_poly = build_poly(txs[i], degree)
         
         ws.append(ridge_regression(ys[i], x_poly, lambda_=lambda_)[0])
-        pred_pct = (ys[i] == predict_labels(x_poly, ws[i])).mean()
-        pred_pcts.append(pred_pct)
-    
-    pct = np.mean(pred_pcts)
-    print(f"ACC={np.around(pct, 3)}")
     
     return ws
 
