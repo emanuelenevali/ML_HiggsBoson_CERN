@@ -69,8 +69,9 @@ In order to ensure a better functioning of our algorithms, we decided to standar
 \vspace{-0.8cm}\\
 
 \subsection{Polynomial Expansion}
-We tried also to improve our predictions by expanding the features In particular, we augmented features by implementing a polynomial expansion for each column of the form $\phi:[X]\rightarrow [X,X^2,...,X^D]$.\\
-The polynomial degree $D$ is one of the hyper-parameters of our model: we found its optimal value by performing a 4-fold cross validation on each subset.
+We managed to improve our predictions by expanding the features In particular, we augmented features by implementing a polynomial expansion for each column of the form $\phi:[X]\rightarrow [X,X^2,...,X^D]$.\\
+The polynomial degree $D$ is one of the hyper-parameters of our model: we found its optimal value by performing a 4-fold cross validation on each subset.\\
+In addition, we decided to add for each couple of features a new feature with their product. This last operation improved significantly the accuracy of the model.\\
 
 \section{Methods}
 After the pre-processing on the dataset, we managed to find a model for our problem by implementing six different methods:
@@ -100,11 +101,11 @@ Due to the fact that we were facing a binary classification problem, we first fo
 For this reason, we focused on calibrating Ridge Regression hyperparameters. We did it by using grid-search method and 4-fold cross-validation, looking for the best compromise between underfitting and overfitting. We adjusted the hyperparameters for
 each of the four subclasses.\\
 \vspace{0.05cm}\\
-At the end, we obtained a model that achieved an accuracy of 0.831 on both AIcrowd and on local test set.
+At the end, we obtained a model that achieved an accuracy of 0.837 on AIcrowd platform.
 \section{Conclusions}
 The best performance on the Higgs boson
 challenge, with an accuracy on the test set of
-0.831, was obtained with a Ridge Regression.\\
+0.837, was obtained with a Ridge Regression.\\
 It is important to underline that data analysis, data cleaning and feature preprocessing played a key role in this task, enabling us to achieve massive improvements in model's accuracy.\\
 
 
