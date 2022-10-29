@@ -55,9 +55,9 @@ After a search for outliers in the data, we set $\alpha = 0.1$ and decided to ed
 We noticed that some of the features represents measurements of angles. For this reason, in order to adapt our model to the periodicity, we tried to replace these columns with sine and cosine transformations. However, only the latter appeared to be effective, and it was the only one kept in the final model.\\
 \vspace{-0.8cm}\\
 
-\subsection{Correlated features}
-We observed that the empirical distribution of some of the features was too similar, index of an high correlation between them. By not considering these features, we slightly improved our performance.\\
-\vspace{-0.8cm}\\
+%\subsection{Correlated features}
+%We observed that the empirical distribution of some of the features was too similar, index of an high correlation between them. By not considering these features, we slightly improved our performance.\\
+%\vspace{-0.8cm}\\
 
 \subsection{Heavy-tailed features}
 Noticing that many of the features were heavy-tailed, we computed for these a logaritmic transformation: $x_{k}^{*} = log(1+x_k)$ (where $k$ is the feature column). These transformation  helps in reducing or removing the skewness of our original data.\\
@@ -71,7 +71,27 @@ In order to ensure a better functioning of our algorithms, we decided to standar
 \subsection{Polynomial Expansion}
 We managed to improve our predictions by expanding the features In particular, we augmented features by implementing a polynomial expansion for each column of the form $\phi:[X]\rightarrow [X,X^2,...,X^D]$.\\
 The polynomial degree $D$ is one of the hyper-parameters of our model: we found its optimal value by performing a 4-fold cross validation on each subset.\\
-In addition, we decided to add for each couple of features a new feature with their product. This last operation improved significantly the accuracy of the model.\\
+In addition, we decided to add for each couple of features a new feature with their product, and to compute the square root and the cubic root of each feature. This last operations improved significantly the accuracy of the model.\\
+
+\begin{center}
+\label{fig:accuracytab}
+\scalebox{0.7}{\begin{tabular}{|c|c c c c|c|}
+\hline
+Method & Subset 1 & Subset 2 & Subset 3 & Subset 4 & Total\\
+\hline
+Gradient Descent & 70.7\% & 65.4\% & 67.9\% & 68.3\% & 68.3\%\\
+Stochastic Gradient Descent & 69.8\% & 66.6\% & 67.5\% & 68.5\% & 68.2\%\\
+Least squares & 84.6\% & 81.1\% & 84.4\% & 84.1\% & 83.5\%\\
+Ridge regression & 84.7\% & 81.3\% & 84.7\% & 84.5\% & 83.6\%\\
+Logistic regression & 77.1\% & 68.6\% & 67.1\% & 69.8\% & 71.8\%\\
+Regularized logistic & 76.6\% & 69.1\% & 66.7\% & 69.8\% & 71.6\%\\
+\hline
+Variance & \multicolumn{5}{|c|}{$\pm 10^{-3}$}\\
+\hline
+\end{tabular}}\\
+\captionof{table}{Accuracies for each method and subset. The average was weighted on the number of points for each subset}
+\end{center}
+\vspace{0.1cm}\\
 
 \section{Methods}
 After the pre-processing on the dataset, we managed to find a model for our problem by implementing six different methods:
@@ -89,8 +109,8 @@ method, and the corresponding loss value (or cost function).\\
 Optimal parameters $\lambda$ (regularization to reduce overfitting), $\gamma$ (step size for gradient and stochastic gradient descent) and $D$ (degrees for polynomial expansion) were chosen through a 4-fold cross validation for each subset.
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.237\textwidth]{report/lambdas.png}
-    \includegraphics[width=0.237\textwidth]{report/degrees.png}
+    \includegraphics[width=0.4\textwidth]{report/lambdas2.png} \\
+    \includegraphics[width=0.4\textwidth]{report/degrees2.png}
     \caption{Accuracy for different values of $\lambda$ and $D$}
     \label{fig:lambdas}
 \end{figure}\\
@@ -100,25 +120,7 @@ Optimal parameters $\lambda$ (regularization to reduce overfitting), $\gamma$ (s
 Due to the fact that we were facing a binary classification problem, we first focused on the Regularized Logistic Regression. However, in the meanwhile we also carried out multiple tests with Least Squares and Ridge Regression, and remarkably the latter turned out to be the most effective method.\\
 For this reason, we focused on calibrating Ridge Regression hyperparameters. We did it by using grid-search method and 4-fold cross-validation, looking for the best compromise between underfitting and overfitting. We adjusted the hyperparameters for
 each of the four subclasses.
-\begin{center}
-\label{fig:accuracytab}
-\scalebox{0.7}{\begin{tabular}{|c|c c c c|c|}
-\hline
-Method & Subset 1 & Subset 2 & Subset 3 & Subset 4 & Average\\
-\hline
-Gradient Descent & 70.7\% & 65.4\% & 67.9\% & 68.3\% & 68.2\%\\
-Stochastic Gradient Descent & 69.8\% & 66.6\% & 67.5\% & 68.5\% & 68.3\%\\
-Least squares & 84.6\% & 81.4\% & 84.6\% & 84.2\% & 83.6\%\\
-Ridge regression & 84.7\% & 81.3\% & 84.7\% & 84.5\% & 83.7\%\\
-Logistic regression & 77.1\% & 68.6\% & 67.1\% & 69.8\% & 71.8\%\\
-Regularized logistic & 76.6\% & 69.1\% & 66.7\% & 69.8\% & 71.6\%\\
-\hline
-Variance & \multicolumn{5}{|c|}{$\pm 10^{-3}$}\\
-\hline
-\end{tabular}}\\
-\captionof{table}{Accuracies for each method and subset. The average was weighted on the number of points for each subset}
-\end{center}
-\vspace{0.1cm}\\
+
 At the end, we obtained a model that achieved an accuracy of 0.837 on AIcrowd platform.
 \section{Conclusions}
 The best performance on the Higgs boson
