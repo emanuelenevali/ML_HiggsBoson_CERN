@@ -4,6 +4,7 @@
 import csv
 import numpy as np
 
+
 def load_csv_data(data_path, sub_sample=False):
     """
     Loads data and returns y (class labels), tX (features) and ids (event ids)
@@ -14,9 +15,9 @@ def load_csv_data(data_path, sub_sample=False):
     ids = x[:, 0].astype(np.int)
     input_data = x[:, 2:]
 
-    # convert class labels from strings to binary (0,1)
+    # convert class labels from strings to binary (-1,1)
     yb = np.ones(len(y))
-    yb[np.where(y == "b")] = 0
+    yb[np.where(y == "b")] = -1
 
     # sub-sample
     if sub_sample:
@@ -24,8 +25,9 @@ def load_csv_data(data_path, sub_sample=False):
         input_data = input_data[::50]
         ids = ids[::50]
 
-    return yb, input_data, ids 
-        
+    return yb, input_data, ids
+
+
 def predict_labels(tx, w):
     """
     Return prediction given the data and the weights
@@ -33,10 +35,11 @@ def predict_labels(tx, w):
 
     y = tx.dot(w)
 
-    y[np.where(y <= 0.5)] = 0
-    y[np.where(y > 0.5)] = 1
+    y[np.where(y <= 0)] = -1
+    y[np.where(y > 0)] = 1
 
     return y
+
 
 def create_csv_submission(ids, y_pred, name):
     """
@@ -45,17 +48,17 @@ def create_csv_submission(ids, y_pred, name):
                y_pred (predicted class labels)
                name (string name of .csv output file to be created)
     """
-    y_pred[np.where(y_pred == 0)] = -1
+    # y_pred[np.where(y_pred == 0)] = -1
     with open(name, "w") as csvfile:
         fieldnames = ["Id", "Prediction"]
         writer = csv.DictWriter(csvfile, delimiter=",", fieldnames=fieldnames)
         writer.writeheader()
         for r1, r2 in zip(ids, y_pred):
             writer.writerow({"Id": int(r1), "Prediction": int(r2)})
-            
+
 
 def cleaning_data(tx, nan_val=-999):
-    """ 
+    """
     Substitute with the median the NaN values (-999)
     """
     D = tx.shape[1]
@@ -64,9 +67,10 @@ def cleaning_data(tx, nan_val=-999):
         median = np.median(tx[:, i][tx[:, i] != nan_val])
         tx[:, i] = np.where(tx[:, i] == nan_val, median, tx[:, i])
 
-    return tx       
-            
-def delete_outliers(tx, a=.05):
+    return tx
+
+
+def delete_outliers(tx, a=0.05):
     """
     Delete the tails of tx given the quantile a (a=5% by default)
     """
@@ -74,9 +78,10 @@ def delete_outliers(tx, a=.05):
 
     for i in range(D):
         tx[:, i][tx[:, i] < np.quantile(tx[:, i], a)] = np.quantile(tx[:, i], a)
-        tx[:, i][tx[:, i] > np.quantile(tx[:, i], 1-a)] = np.quantile(tx[:, i], 1-a)
+        tx[:, i][tx[:, i] > np.quantile(tx[:, i], 1 - a)] = np.quantile(tx[:, i], 1 - a)
 
     return tx
+
 
 def get_mask(tx):
     """
@@ -84,8 +89,13 @@ def get_mask(tx):
     """
     jet_column = 22
 
-    return [tx[:, jet_column] == 0, tx[:, jet_column] == 1, \
-            tx[:, jet_column] == 2, tx[:, jet_column] == 3]
+    return [
+        tx[:, jet_column] == 0,
+        tx[:, jet_column] == 1,
+        tx[:, jet_column] == 2,
+        tx[:, jet_column] == 3,
+    ]
+
 
 def abs_transform(tx):
     """
@@ -97,49 +107,54 @@ def abs_transform(tx):
 
     return tx
 
+
 def standardize(tx, mean, std):
     """
     Standardize the original data set
     """
     return (tx - mean)[:, std != 0] / std[std != 0]
 
+
 def heavy_tail(x, idx):
     """
     Compute the log transformation for heavy-tailed features
     """
     cols_to_log = {
-        0 : [0, 1, 2, 3, 8, 9, 13, 16, 19, 21],
-        1 : [0, 1, 2, 3, 8, 9, 13, 16, 19, 21, 23, 29],
-        2 : [0, 1, 2, 3, 8, 9, 13, 16, 19, 21, 23, 26, 29],
-        3 : [0, 1, 2, 3, 8, 9, 13, 16, 19, 21, 23, 26, 29],
+        0: [0, 1, 2, 3, 8, 9, 13, 16, 19, 21],
+        1: [0, 1, 2, 3, 8, 9, 13, 16, 19, 21, 23, 29],
+        2: [0, 1, 2, 3, 8, 9, 13, 16, 19, 21, 23, 26, 29],
+        3: [0, 1, 2, 3, 8, 9, 13, 16, 19, 21, 23, 26, 29],
     }
 
     x[:, cols_to_log[idx]] = np.log1p(x[:, cols_to_log[idx]])
 
     return x
 
+
 def cos_angles(x):
     """
     Tranformation for angles features
     """
-    column_ids = [15,18,20,25,28]
+    column_ids = [15, 18, 20, 25, 28]
 
-    x[:,column_ids] = np.cos(x[:, column_ids])
+    x[:, column_ids] = np.cos(x[:, column_ids])
 
     return x
 
+
 def drop_columns(x, idx):
     """
-    Delete the column representing 
+    Delete the column representing
     """
     cols_to_drop = {
-            0 : [4, 5, 6, 12, 22, 23, 24, 25, 26, 27, 28, 29],
-            1 : [4, 5, 6, 12, 22, 26, 27, 28],
-            2 : [22],
-            3 : [22],
-        }
+        0: [4, 5, 6, 12, 22, 23, 24, 25, 26, 27, 28, 29],
+        1: [4, 5, 6, 12, 22, 26, 27, 28],
+        2: [22],
+        3: [22],
+    }
 
     return np.delete(x, cols_to_drop[idx], axis=1)
+
 
 def pre_processing(x_tr, x_te, idx):
     """
