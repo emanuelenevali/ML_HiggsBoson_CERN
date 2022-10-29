@@ -118,7 +118,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
         y:         numpy array of shape (N, 1), N is the number of samples
         tx:        numpy array of shape (N, D), D is the number of features
         initial_w: numpy array of shape=(2, 1). The initial guess (or the initialization) for the model parameters
-        max_iters: a scalar denoting the total number of iterations of SGD
+        max_iters: a scalar denoting the total number of iterations of GD
         gamma:     a scalar denoting the stepsize
 
     Returns:
@@ -127,14 +127,11 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
 
     """
     w = initial_w
-    threshold = 1e-9
-    last_loss = np.Inf
+    
     for _ in range(max_iters):
         g = lr_calculate_gradient(y, tx, w)
         w = w - gamma * g
         loss = lr_calculate_loss(y, tx, w)
-        if abs(loss - last_loss) < threshold:
-            break
 
     return w, loss
 
@@ -148,7 +145,7 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
         tx:        numpy array of shape (N, D), D is the number of features
         lambda_:   a scalar denoting the lambda used for regularization
         initial_w: initial_w: numpy array of shape=(2, 1). The initial guess (or the initialization) for the model parameters
-        max_iters: a scalar denoting the total number of iterations of SGD
+        max_iters: a scalar denoting the total number of iterations of GD
         gamma:     a scalar denoting the stepsize
 
     Returns:
@@ -157,13 +154,10 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     """
 
     w = initial_w
-    threshold = 1e-9
-    last_loss = np.Inf
+
     for _ in range(max_iters):
         g = reg_lr_compute_gradient(y, tx, w, lambda_)
         w = w - gamma * g
         loss = reg_lr_compute_loss(y, tx, w, lambda_)
-        if abs(loss - last_loss) < threshold:
-            break
 
     return w, loss
