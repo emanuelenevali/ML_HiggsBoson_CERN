@@ -27,7 +27,8 @@ In this folder can also be found `sample_submission.csv`, with all the results g
 - In `implementations.py` we implemented the 6 requested methods to train our model
 - `model_helpers.py` contains useful functions for the implementation of methods
 - `data_helpers.py` contains the functions implemented for feature engineering and preprocessing
-- `run.ipynb` uses the selected function to generate the results
+- `HiggsChallenge.ipynb` include the complete notebook for our model, with cross validation and grid search for best parameters
+- `run.py` uses the selected function to generate the results
 
 ### Report
 
