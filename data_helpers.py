@@ -53,23 +53,6 @@ def create_csv_submission(ids, y_pred, name):
         for r1, r2 in zip(ids, y_pred):
             writer.writerow({"Id": int(r1), "Prediction": int(r2)})
             
-            
-def compute_accuracy(txs,ys,params):
-    """
-    Compute accuracy on the given set
-    """
-    pred_pcts = []
-    for i in range(len(txs)):
-        lambda_, degree = params[i]
-        x_poly = build_poly(txs[i], degree)
-        
-        pred_pct = (ys[i] == predict_labels(x_poly, ws[i])).mean()
-        pred_pcts.append(pred_pct)
-    
-    pct = np.mean(pred_pcts)
-    print(f"ACC={np.around(pct, 3)}")
-    
-    
 
 def cleaning_data(tx, nan_val=-999):
     """ 
@@ -87,8 +70,9 @@ def delete_outliers(tx, a=.05):
     """
     Delete the tails of tx given the quantile a (a=5% by default)
     """
+    D = tx.shape[1]
 
-    for i in range(tx.shape[1]):
+    for i in range(D):
         tx[:, i][tx[:, i] < np.quantile(tx[:, i], a)] = np.quantile(tx[:, i], a)
         tx[:, i][tx[:, i] > np.quantile(tx[:, i], 1-a)] = np.quantile(tx[:, i], 1-a)
 

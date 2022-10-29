@@ -189,24 +189,22 @@ def build_k_indices(num_row, k_fold, seed):
 
     return np.array(k_indices)
 
-
-
 def power(matrix, n):
     """ 
-    Compute the th-square of each element of a matrix
+    Compute the nth-square of each element of a matrix
     """
 
     N, D = matrix.shape
-    r = np.zeros([N,D])
+    pow = np.zeros([N, D])
 
     for i in range(N):
         for j in range(D):
-            if matrix[i, j]>0:
-                matrix[i, j] = matrix[i, j]**(1/n)
+            if matrix[i, j] > 0:
+                pow[i, j] = matrix[i, j]**(1/n)
             else:
-                r[i, j] = -(-matrix[i, j])**(1/n)
+                pow[i, j] = -(-matrix[i, j])**(1/n)
 
-    return r 
+    return pow
 
 def build_poly(x, degree):
     """
@@ -253,3 +251,17 @@ def build_poly(x, degree):
     poly[:, D*degree+couple+D+1:] = power(x, 1/3)
     
     return poly
+
+def compute_mean_accuracy(txs, ys, ws, params):
+    """
+    Compute accuracy on the given set
+    """
+    pred_pcts = []
+    for i in range(len(txs)):
+        _, degree = params[i]
+        x_poly = build_poly(txs[i], degree)
+        
+        pred_pct = (ys[i] == predict_labels(x_poly, ws[i])).mean()
+        pred_pcts.append(pred_pct)
+    
+    return np.mean(pred_pcts)

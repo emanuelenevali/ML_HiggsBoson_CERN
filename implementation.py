@@ -110,7 +110,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
     Args:
         y:         numpy array of shape (N, 1), N is the number of samples
         tx:        numpy array of shape (N, D), D is the number of features
-        initial_w: initial_w: numpy array of shape=(2, 1). The initial guess (or the initialization) for the model parameters
+        initial_w: numpy array of shape=(2, 1). The initial guess (or the initialization) for the model parameters
         max_iters: a scalar denoting the total number of iterations of SGD
         gamma:     a scalar denoting the stepsize
     
