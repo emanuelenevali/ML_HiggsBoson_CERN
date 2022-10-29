@@ -55,7 +55,7 @@ def load_and_prepare_data():
     return x_tr_subsamples, x_te_subsamples, y_tr_subsamples, y_pred, mask_te, ids_te
 
 
-def train_model(txs, ys, params):
+def train_model(txs, ys):
     """
     Trains the classifier model
 
@@ -72,21 +72,33 @@ def train_model(txs, ys, params):
 
     for i in range(len(txs)):
 
-        lambda_, degree = params[i]
+        lambda_, degree = hyper_params[i]
         x_poly = build_poly(txs[i], degree)
 
         ws.append(ridge_regression(ys[i], x_poly, lambda_=lambda_)[0])
 
     return ws
 
+def train_set_accuracy(ws, x_tr, y_tr):
 
-def generate_predictions(txs_te, ws, mask_test, y_pred, params):
+    correct = np.array((0, ))
+    for i in range(N):
+        degree = hyper_params[i][1]
+        tmp = y_tr[i] == predict_labels(build_poly(x_tr[i], degree), ws[i])
+        correct = np.vstack((correct, tmp))
+
+    acc = np.mean(correct)
+
+    print(f'Accuracy on train set: {np.around(acc, 3)}')
+
+
+def generate_predictions(txs_te, ws, mask_test, y_pred):
     """
     Generate the predictions and save ouput
     """
 
     for j in range(len(txs_te)):
-        degree = params[j][1]
+        degree = hyper_params[j][1]
         y_pred[mask_test[j]] = [
             y[0] for y in predict_labels(build_poly(txs_te[j], degree), ws[j])
         ]
@@ -107,9 +119,11 @@ def main():
         ids_te,
     ) = load_and_prepare_data()
 
-    ws = train_model(x_tr_subsamples, y_tr_subsamples, hyper_params)
+    ws = train_model(x_tr_subsamples, y_tr_subsamples)
 
-    generate_predictions(x_te_subsamples, ws, mask_te, y_pred, hyper_params)
+    train_set_accuracy(ws, x_tr_subsamples, y_tr_subsamples)
+
+    generate_predictions(x_te_subsamples, ws, mask_te, y_pred)
 
     create_csv_submission(ids_te, y_pred, paths["submission"])
 
