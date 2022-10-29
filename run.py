@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from implementation import *
+from implementations import *
 from data_helpers import *
 import warnings
 
