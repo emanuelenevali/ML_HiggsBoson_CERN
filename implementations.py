@@ -138,7 +138,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
 
     ###################################################################################################################
     if max_iters == 0:
-        return w, compute_loss(y, tx, w)
+        return w, lr_calculate_loss(y, tx, w)
     ###################################################################################################################
 
     for _ in range(max_iters):
@@ -170,7 +170,7 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
 
     ###################################################################################################################
     if max_iters == 0:
-        return w, compute_loss(y, tx, w)
+        return w, reg_lr_compute_loss(y, tx, w, lambda_)
     ###################################################################################################################
 
     for _ in range(max_iters):
