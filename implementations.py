@@ -127,7 +127,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
 
     """
     w = initial_w
-    
+
     for _ in range(max_iters):
         g = lr_calculate_gradient(y, tx, w)
         w = w - gamma * g

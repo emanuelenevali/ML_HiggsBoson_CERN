@@ -114,6 +114,7 @@ def standardize(tx, mean, std):
     """
     return (tx - mean)[:, std != 0] / std[std != 0]
 
+
 def correlation(x):
     """
     Find highly correlated features (close to 1)
@@ -122,6 +123,7 @@ def correlation(x):
     upper_triangle = np.triu(correlation, 1)
 
     return np.argwhere(upper_triangle)
+
 
 def heavy_tail(x, idx):
     """
@@ -166,7 +168,7 @@ def drop_columns(x, idx=None, cols_to_drop=None):
 
     else:
         if len(cols_to_drop) == 0:
-            return x 
+            return x
         cols_to_drop = cols_to_drop[0]
 
     return np.delete(x, cols_to_drop, axis=1)

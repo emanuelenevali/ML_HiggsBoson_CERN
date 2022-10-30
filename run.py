@@ -79,9 +79,10 @@ def train_model(txs, ys):
 
     return ws
 
+
 def train_set_accuracy(ws, x_tr, y_tr):
 
-    correct = np.array((0, ))
+    correct = np.array((0,))
     for i in range(N):
         degree = hyper_params[i][1]
         tmp = y_tr[i] == predict_labels(build_poly(x_tr[i], degree), ws[i])
@@ -89,7 +90,7 @@ def train_set_accuracy(ws, x_tr, y_tr):
 
     acc = np.mean(correct)
 
-    print(f'Accuracy on train set: {np.around(acc, 3)}')
+    print(f"Accuracy on train set: {np.around(acc, 3)}")
 
 
 def generate_predictions(txs_te, ws, mask_test, y_pred):

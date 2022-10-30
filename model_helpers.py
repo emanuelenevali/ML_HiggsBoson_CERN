@@ -16,7 +16,7 @@ def compute_mse(e):
         the value of the loss (a scalar)
     """
 
-    return np.mean(e ** 2) / 2
+    return np.mean(e**2) / 2
 
 
 def compute_loss(y, tx, w):
