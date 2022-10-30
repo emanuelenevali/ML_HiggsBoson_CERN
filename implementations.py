@@ -22,7 +22,10 @@ def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
     """
 
     w = initial_w
-
+    ##########################################################################################
+    if max_iters==0:
+        return w, compute_loss(y,tx,w)
+    ##########################################################################################
     for _ in range(max_iters):
         gradient = compute_gradient(y, tx, w)
         w = w - gamma * gradient
