@@ -39,20 +39,27 @@ We noticed that some features are meaningless for some values of jets, therefore
 \subsection{Missing Values}
 Thanks to the documentation, we noticed that each “-999” value
 in the dataset consists in a missing value: we decided to replace all of them with the median of the feature. In particular, we chose to use the median instead of the mean because of its nature of robust estimator to outliers.\\
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.237\textwidth]{report/HeavyTail_before_log.png}
+    \includegraphics[width=0.237\textwidth]{report/HeavyTail_after_log.png}
+    \caption{Logarithmic transformation for the 1st feature}
+    \label{fig:lambdas}
+\end{figure}
 Furthermore, for subclasses marked by \textit{Pri jet num} $0$ and $1$ we decided not to consider columns with too many missing values, in order to avoid singular matrices.\\
 \vspace{-0.8cm}\\
 
 \subsection{Absolute transform of Symmetrical Features}
 For features whose distribution is symmetric around 0 and for which the proportion of categories is not too even, we replaced them with their absolute value.\\
-This increases the gap between the categories, and makes them more detectable by the model. \\
+This operation increases the gap between the categories, and makes them more detectable by the model. \\
 \vspace{-0.8cm}\\
 
-\subsection{Outliers erasure}
-After a search for outliers in the data, we set $\alpha = 0.1$ and decided to edge the extreme values of each feature to the $\alpha$-quantile (for the lower tail) and to the $(1-\alpha)$-quantile (for the upper tail).\\
+\subsection{Outliers threshold}
+After a search for outliers in the data, we set $\alpha = 0.05$ and decided to edge the extreme values of each feature to the $\alpha$-quantile (for the lower tail) and to the $(1-\alpha)$-quantile (for the upper tail).\\
 \vspace{-0.8cm}\\
 
 \subsection{Angles}
-We noticed that some of the features represents measurements of angles. For this reason, in order to adapt our model to the periodicity, we tried to replace these columns with sine and cosine transformations. However, only the latter appeared to be effective, and it was the only one kept in the final model.\\
+We noticed that some of the features represents measurements of angles. For this reason, in order to adapt our model to the periodicity of this type of data, we tried to replace these columns with sine and cosine transformations. However, only the latter appeared to be effective, and it was the only one kept in the final model.\\
 \vspace{-0.8cm}\\
 
 %\subsection{Correlated features}
@@ -60,18 +67,11 @@ We noticed that some of the features represents measurements of angles. For this
 %\vspace{-0.8cm}\\
 
 \subsection{Heavy-tailed features}
-Noticing that many of the features were heavy-tailed, we computed for these a logaritmic transformation: $x_{k}^{*} = log(1+x_k)$ (where $k$ is the feature column). These transformation  helps in reducing or removing the skewness of our original data.\\
+Noticing that many of the features were heavy-tailed, we computed for these a logarithmic transformation: $x_{k}^{*} = log(1+x_k)$ (where $k$ is the feature column). These transformation  helps in reducing or removing the skewness of our original data.\\
 \vspace{-0.8cm}\\
-
 
 \subsection{Standardization}
-In order to ensure a better functioning of our algorithms, we decided to standardize the data by subtracting from each feature its mean and dividing by its standard deviation: $Z=\frac{X-\mu}{\sigma}$. The same process was applied both to the train set and to the test set, using on the latter $\mu$ and $\sigma$ of the former.\\
-\vspace{-0.8cm}\\
-
-\subsection{Polynomial Expansion}
-We managed to improve our predictions by expanding the features In particular, we augmented features by implementing a polynomial expansion for each column of the form $\phi:[X]\rightarrow [X,X^2,...,X^D]$.\\
-The polynomial degree $D$ is one of the hyper-parameters of our model: we found its optimal value by performing a 4-fold cross validation on each subset.\\
-In addition, we decided to add for each couple of features a new feature with their product, and to compute the square root and the cubic root of each feature. This last operations improved significantly the accuracy of the model.\\
+In order to ensure a better functioning of our algorithms, we decided to standardize the data by subtracting from each feature its mean and dividing by its standard deviation: 
 
 \begin{center}
 \label{fig:accuracytab}
@@ -92,6 +92,15 @@ Variance & \multicolumn{5}{|c|}{$\pm 10^{-3}$}\\
 \captionof{table}{Accuracies for each method and subset. The average was weighted on the number of points for each subset}
 \end{center}
 \vspace{0.1cm}\\
+
+$Z=\frac{X-\mu}{\sigma}$. The same process was applied both to the train set and to the test set, using on the latter $\mu$ and $\sigma$ of the former.\\
+\vspace{-0.8cm}\\
+
+\subsection{Polynomial Expansion}
+We managed to improve our predictions by expanding the features In particular, we augmented features by implementing a polynomial expansion for each column of the form $\phi:[X]\rightarrow [X,X^2,...,X^D]$.\\
+The polynomial degree $D$ is one of the hyper-parameters of our model: we found its optimal value by performing a 4-fold cross validation on each subset.\\
+In addition, we decided to add for each couple of features a new feature with their product, and to compute the square root and the cubic root of each feature. This last operations improved significantly the accuracy of the model.\\
+\vspace{-0.6cm}\\
 
 \section{Methods}
 After the pre-processing on the dataset, we managed to find a model for our problem by implementing six different methods:
@@ -118,14 +127,13 @@ Optimal parameters $\lambda$ (regularization to reduce overfitting), $\gamma$ (s
 
 \section{Results}
 Due to the fact that we were facing a binary classification problem, we first focused on the Regularized Logistic Regression. However, in the meanwhile we also carried out multiple tests with Least Squares and Ridge Regression, and remarkably the latter turned out to be the most effective method.\\
-For this reason, we focused on calibrating Ridge Regression hyperparameters. We did it by using grid-search method and 4-fold cross-validation, looking for the best compromise between underfitting and overfitting. We adjusted the hyperparameters for
-each of the four subclasses.
-
+For this reason, we focused on calibrating Ridge Regression hyperparameters. We did it by using grid-search method and 4-fold cross-validation, looking for the best compromise between underfitting and overfitting. We adjusted the hyperparameters for each of the four subclasses.\\
 At the end, we obtained a model that achieved an accuracy of 0.837 on AIcrowd platform.
+
+
 \section{Conclusions}
 The best performance on the Higgs boson
-challenge, with an accuracy on the test set of
-0.837, was obtained with a Ridge Regression.\\
+challenge, with an accuracy on the test set of 0.837, was obtained with a Ridge Regression.\\
 It is important to underline that data analysis, data cleaning and feature preprocessing played a key role in this task, enabling us to achieve massive improvements in model's accuracy.\\
 
 
