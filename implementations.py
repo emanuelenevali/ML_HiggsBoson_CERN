@@ -51,10 +51,9 @@ def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
     w = initial_w
 
     ###################################################################################################################
-    if max_iters==0:
+    if max_iters == 0:
         return w, compute_loss(y, tx, w)
     ###################################################################################################################
-
 
     for _ in range(max_iters):
 
@@ -135,7 +134,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
     w = initial_w
 
     ###################################################################################################################
-    if max_iters==0:
+    if max_iters == 0:
         return w, compute_loss(y, tx, w)
     ###################################################################################################################
 
@@ -167,10 +166,10 @@ def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     w = initial_w
 
     ###################################################################################################################
-    if max_iters==0:
+    if max_iters == 0:
         return w, compute_loss(y, tx, w)
     ###################################################################################################################
-    
+
     for _ in range(max_iters):
         g = reg_lr_compute_gradient(y, tx, w, lambda_)
         w = w - gamma * g
