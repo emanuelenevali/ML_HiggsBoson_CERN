@@ -2,7 +2,7 @@
 
 <br />
 <div align="center">
-<h1 align="center">Higgs Boson Classification Project</h1>
+<h1 align="center">The Higgs Boson Classification Project</h1>
   <p align="center">
     Machine Learning (CS-433)
   </p>
@@ -75,6 +75,6 @@ The data `train.csv`, `test.csv` and `sample-submission.csv` can be found in [AI
 
 ## Results
 
-As a final result, we obtained an accuracy of **0.838** on the train set and our final submission scored **0.837** on the test set (with a F1 score of **0.751**), for a final position of 12 over 224 teams!
+As a final result, we obtained an accuracy of **0.838** on the train set and our final submission scored **0.837** on the test set (with a F1 score of **0.751**), for a final position of 13th over 224 teams!
 
 <p align="right">(<a href="#top">Back to top</a>)</p>

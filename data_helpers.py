@@ -48,7 +48,6 @@ def create_csv_submission(ids, y_pred, name):
                y_pred (predicted class labels)
                name (string name of .csv output file to be created)
     """
-    # y_pred[np.where(y_pred == 0)] = -1
     with open(name, "w") as csvfile:
         fieldnames = ["Id", "Prediction"]
         writer = csv.DictWriter(csvfile, delimiter=",", fieldnames=fieldnames)
@@ -113,16 +112,6 @@ def standardize(tx, mean, std):
     Standardize the original data set
     """
     return (tx - mean)[:, std != 0] / std[std != 0]
-
-
-def correlation(x):
-    """
-    Find highly correlated features (close to 1)
-    """
-    correlation = np.isclose(np.corrcoef(x.T), 1)
-    upper_triangle = np.triu(correlation, 1)
-
-    return np.argwhere(upper_triangle)
 
 
 def heavy_tail(x, idx):
@@ -196,10 +185,6 @@ def pre_processing(x_tr, x_te, idx):
 
     x_tr = drop_columns(x_tr, idx=idx)
     x_te = drop_columns(x_te, idx=idx)
-
-    corr_features = correlation(x_tr)
-    x_tr = drop_columns(x_tr, cols_to_drop=corr_features)
-    x_te = drop_columns(x_te, cols_to_drop=corr_features)
 
     mean, std = np.mean(x_tr, axis=0), np.std(x_tr, axis=0)
 
