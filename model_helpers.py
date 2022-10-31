@@ -16,7 +16,7 @@ def compute_mse(e):
         the value of the loss (a scalar)
     """
 
-    return np.mean(e**2) / 2
+    return np.mean(e ** 2) / 2
 
 
 def compute_loss(y, tx, w):
@@ -200,9 +200,9 @@ def build_k_indices(num_row, k_fold, seed):
     return np.array(k_indices)
 
 
-def power(matrix, n):
+def root(matrix, n):
     """
-    Compute the nth-square of each element of a matrix
+    Compute the nth-root of each element of a matrix
     """
 
     N, D = matrix.shape
@@ -260,21 +260,7 @@ def build_poly(x, degree):
     poly[:, D * degree + couple + 1 : D * degree + couple + D + 1] = np.abs(x) ** (0.5)
 
     # and cubic root
-    poly[:, D * degree + couple + D + 1 :] = power(x, 1 / 3)
+    poly[:, D * degree + couple + D + 1 :] = root(x, 1 / 3)
 
     return poly
 
-
-def compute_mean_accuracy(txs, ys, ws, params):
-    """
-    Compute accuracy on the given set
-    """
-    pred_pcts = []
-    for i in range(len(txs)):
-        _, degree = params[i]
-        x_poly = build_poly(txs[i], degree)
-
-        pred_pct = (ys[i] == predict_labels(x_poly, ws[i])).mean()
-        pred_pcts.append(pred_pct)
-
-    return np.mean(pred_pcts)
