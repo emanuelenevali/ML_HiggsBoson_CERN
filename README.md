@@ -2,7 +2,7 @@
 
 <br />
 <div align="center">
-<h3 align="center">Higgs Boson Classification Project</h3>
+<h1 align="center">Higgs Boson Classification Project</h1>
   <p align="center">
     Machine Learning (CS-433)
   </p>
